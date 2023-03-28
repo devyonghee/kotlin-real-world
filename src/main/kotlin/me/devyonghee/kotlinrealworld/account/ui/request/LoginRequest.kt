@@ -5,14 +5,11 @@ import com.fasterxml.jackson.annotation.JsonRootName
 import jakarta.validation.constraints.NotBlank
 
 @JsonRootName("user")
-data class AccountRequest(
+data class LoginRequest(
     @NotBlank
     @JsonProperty("email")
     val email: String,
     @NotBlank
     @JsonProperty("password")
     val password: String,
-    @NotBlank
-    @JsonProperty("username")
-    val username: String,
 )

@@ -1,9 +1,11 @@
 package me.devyonghee.kotlinrealworld.account.ui.response
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonRootName
 
 @JsonRootName("user")
-class AccountResponse(
+data class AccountResponse(
+    @JsonProperty("email")
     val email: String,
     val token: String,
     val username: String,

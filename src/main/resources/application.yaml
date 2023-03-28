@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:h2:mem:testdb;
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jackson:
+    deserialization:
+      unwrap-root-value: true
+    serialization:
+      wrap-root-value: true
+
+jwt:
+  secret: HIXF+XLz1FpA3Zvp3l9mEZXzWw4xd9KcsaMX38wz1VM=
