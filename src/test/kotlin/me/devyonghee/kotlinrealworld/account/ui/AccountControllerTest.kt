@@ -108,7 +108,7 @@ class AccountControllerTest(
                     }
                 }
             """.trimIndent()
-        }.andDo { print() }.andExpect {
+        }.andExpect {
             status { isOk() }
             jsonPath("$.user.bio") { value(bio) }
             jsonPath("$.user.image") { value(imageUri) }

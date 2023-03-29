@@ -20,4 +20,8 @@ class AccountService(
         return accountRepository.findByEmail(email)
             ?: throw NotFoundElementException("account(email: `$email`) is not found")
     }
+
+    fun update(email: String, account: Account): Account {
+        return accountRepository.update(email, account)
+    }
 }

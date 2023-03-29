@@ -2,6 +2,7 @@ package me.devyonghee.kotlinrealworld.account.application
 
 import me.devyonghee.kotlinrealworld.account.domain.Account
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
+import me.devyonghee.kotlinrealworld.account.ui.request.AccountUpdateRequest
 import me.devyonghee.kotlinrealworld.account.ui.request.LoginRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
 import me.devyonghee.kotlinrealworld.config.exception.NotFoundElementException
@@ -54,9 +55,9 @@ class AccountUserCase(
         )
     }
 
-    fun account(username: String): AccountResponse {
-        val account: Account = accountService.account(username)
-        val member: Member = memberService.member(username)
+    fun account(email: String): AccountResponse {
+        val account: Account = accountService.account(email)
+        val member: Member = memberService.member(email)
 
         return AccountResponse(
             member.email,
@@ -64,6 +65,45 @@ class AccountUserCase(
             member.username,
             member.bio,
             member.image
+        )
+    }
+
+    @Transactional
+    fun update(email: String, request: AccountUpdateRequest): AccountResponse {
+        val updatedAccount: Account = accountService.update(
+            email, request.toAccount(
+                accountService.account(email),
+                passwordEncoder
+            )
+        )
+
+        val updatedMember: Member = memberService.update(
+            email,
+            request.toMember(memberService.member(email))
+        )
+
+        return AccountResponse(
+            updatedMember.email,
+            jsonWebTokenService.token(updatedAccount.email),
+            updatedMember.username,
+            updatedMember.bio,
+            updatedMember.image
+        )
+    }
+
+    private fun AccountUpdateRequest.toAccount(account: Account, passwordEncoder: PasswordEncoder): Account {
+        return Account(
+            email ?: account.email,
+            password?.let { passwordEncoder.encode(it) } ?: account.password,
+        )
+    }
+
+    private fun AccountUpdateRequest.toMember(member: Member): Member {
+        return Member(
+            username ?: member.username,
+            email ?: member.email,
+            image ?: member.image,
+            bio ?: member.bio
         )
     }
 }

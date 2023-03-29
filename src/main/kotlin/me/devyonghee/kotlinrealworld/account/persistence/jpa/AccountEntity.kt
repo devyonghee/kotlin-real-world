@@ -21,4 +21,9 @@ internal class AccountEntity(
             password = password,
         )
     }
+
+    fun update(account: Account) {
+        email = account.email
+        password = account.password
+    }
 }

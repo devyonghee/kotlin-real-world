@@ -2,16 +2,14 @@ package me.devyonghee.kotlinrealworld.account.ui
 
 import me.devyonghee.kotlinrealworld.account.application.AccountUserCase
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
+import me.devyonghee.kotlinrealworld.account.ui.request.AccountUpdateRequest
 import me.devyonghee.kotlinrealworld.account.ui.request.LoginRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.net.URI
 
 @RestController
@@ -34,5 +32,11 @@ class AccountController(
         return ResponseEntity.ok(accountUserCase.account(user.username))
     }
 
-
+    @PutMapping("/api/user")
+    fun update(
+        @AuthenticationPrincipal user: UserDetails,
+        @Validated @RequestBody request: AccountUpdateRequest
+    ): ResponseEntity<AccountResponse> {
+        return ResponseEntity.ok(accountUserCase.update(user.username, request))
+    }
 }

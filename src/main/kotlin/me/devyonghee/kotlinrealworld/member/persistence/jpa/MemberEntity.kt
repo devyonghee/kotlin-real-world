@@ -7,10 +7,10 @@ import me.devyonghee.kotlinrealworld.member.domain.Member
 @Entity(name = "member")
 class MemberEntity(
     @Id
-    val email: String,
-    val username: String,
-    private val bio: String?,
-    private val image: String?
+    var email: String,
+    var username: String,
+    private var bio: String?,
+    private var image: String?
 ) {
 
     constructor(member: Member) : this(
@@ -27,5 +27,12 @@ class MemberEntity(
             bio = bio,
             image = image
         )
+    }
+
+    fun update(member: Member) {
+        email = member.email
+        username = member.username
+        bio = member.bio
+        image = member.image
     }
 }
