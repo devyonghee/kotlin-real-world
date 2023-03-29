@@ -1,5 +1,7 @@
 package me.devyonghee.kotlinrealworld.config.exception
 
+import org.springframework.http.HttpStatus
+
 open class RealWorldException(
     private val code: ErrorCode,
     override val message: String? = code.defaultMessage,
@@ -7,4 +9,5 @@ open class RealWorldException(
 ) : Exception(message, cause) {
 
     val codeName: String = code.name
+    val httpStatus: HttpStatus = code.httpStatus
 }

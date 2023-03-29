@@ -17,8 +17,9 @@ class MemberService(
             ?: throw NotFoundElementException("member(email: `$email`) is not exist")
     }
 
-    fun exists(email: String): Boolean {
-        return memberRepository.exists(email)
+    fun memberByUsername(username: String): Member {
+        return memberRepository.findByUsername(username)
+            ?: throw NotFoundElementException("member(username: `$username`) is not exist")
     }
 
     fun update(email: String, member: Member): Member {

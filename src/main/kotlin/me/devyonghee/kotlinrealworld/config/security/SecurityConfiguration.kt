@@ -30,6 +30,7 @@ class SecurityConfiguration(
             .authorizeHttpRequests()
             .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
             .requestMatchers("/api/users/login").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/profiles/*").permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilterAt(jsonWebTokenFilter, BasicAuthenticationFilter::class.java)

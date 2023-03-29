@@ -8,5 +8,7 @@ interface MemberRepository {
 
     fun findByEmail(email: String): Member?
 
+    fun findByUsername(email: String): Member?
+
     fun update(email: String, member: Member): Member
 }

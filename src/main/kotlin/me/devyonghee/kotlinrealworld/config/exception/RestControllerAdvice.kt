@@ -15,13 +15,14 @@ class RestControllerAdvice : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(RealWorldException::class)
     fun handleAuthenticationException(exception: RealWorldException): ResponseEntity<ProblemDetail> {
+        logger.error(exception.message, exception)
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(
                 ProblemDetail.forStatusAndDetail(
-                    HttpStatus.UNAUTHORIZED,
+                    exception.httpStatus,
                     exception.message ?: exception.localizedMessage
                 ).apply {
-                    title = "UNAUTHORIZED"
+                    title = exception.codeName
                 }
             )
     }
