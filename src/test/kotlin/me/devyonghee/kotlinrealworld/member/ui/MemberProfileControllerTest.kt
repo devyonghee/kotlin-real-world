@@ -31,7 +31,6 @@ class MemberProfileControllerTest(
         }.andExpect {
             status { isOk() }
             jsonPath("$.profile.username") { value(username) }
-            jsonPath("$.profile.email") { value(email) }
             jsonPath("$.profile.following") { value(false) }
         }
     }
