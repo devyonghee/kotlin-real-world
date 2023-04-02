@@ -55,9 +55,7 @@ class ArticleControllerTest(
 
 
     "아티클 리스트를 조회할 수 있음" {
-        val account: AccountResponse =
-            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), objectMapper)
-
+        mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), objectMapper)
 
         mockmvc.get("/api/articles") {
             param("tag", "tag")

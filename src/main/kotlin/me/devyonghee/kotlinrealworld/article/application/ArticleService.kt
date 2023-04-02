@@ -24,21 +24,21 @@ class ArticleService(
     private val followService: FollowService
 ) {
     @Transactional
-    fun create(username: String, request: ArticleRequest): ArticleResponse {
+    fun create(email: String, request: ArticleRequest): ArticleResponse {
+        val member: Member = memberService.member(email)
         val article: Article = articleRepository.save(
-            Article(request.title, request.description, request.body, request.tagList, request.body, username)
+            Article(request.title, request.description, request.body, request.tagList, member.username)
         )
-        return articleResponse(username, article)
+        return articleResponse(member, article)
     }
 
-    fun articleResponse(username: String, article: Article): ArticleResponse {
-        val member: Member = memberService.memberByUsername(article.author)
+    fun articleResponse(member: Member, article: Article): ArticleResponse {
         val favorites: List<Favorite> = favoriteService.findAll(article.slug)
         return ArticleResponse(
             article,
             member,
-            followService.exists(Follow(article.author, username)),
-            favorites.any { username == it.username },
+            followService.exists(Follow(article.author, member.username)),
+            favorites.any { member.username == it.username },
             favorites.count()
         )
     }

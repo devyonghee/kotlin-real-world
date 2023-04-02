@@ -1,9 +1,11 @@
 package me.devyonghee.kotlinrealworld.article.controller.response
 
+import com.fasterxml.jackson.annotation.JsonRootName
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import me.devyonghee.kotlinrealworld.member.domain.Member
 import java.time.LocalDateTime
 
+@JsonRootName("article")
 class ArticleResponse(
     val slug: String,
     val title: String,

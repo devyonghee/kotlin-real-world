@@ -1,7 +1,7 @@
 package me.devyonghee.kotlinrealworld.favorite.domain
 
 data class Favorite(
-    val articleSlug: Long,
+    val articleSlug: String,
     val username: String,
     val id: Long = 0
 )

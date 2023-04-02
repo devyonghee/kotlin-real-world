@@ -8,8 +8,8 @@ import me.devyonghee.kotlinrealworld.favorite.domain.Favorite
 
 @Entity(name = "favorite")
 class FavoriteEntity(
-    private val articleSlug: Long,
-    private val username: Long,
+    private val articleSlug: String,
+    private val username: String,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0

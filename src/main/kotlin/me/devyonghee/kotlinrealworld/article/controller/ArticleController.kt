@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 class ArticleController(
@@ -25,7 +26,8 @@ class ArticleController(
         @RequestBody request: ArticleRequest,
         @AuthenticationPrincipal user: UserDetails
     ): ResponseEntity<ArticleResponse> {
-        return ResponseEntity.ok(articleService.create(user.username, request))
+        val response: ArticleResponse = articleService.create(user.username, request)
+        return ResponseEntity.created(URI("/api/articles/${response.slug}")).body(response)
     }
 
     @GetMapping("/api/articles")
