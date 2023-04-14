@@ -1,5 +1,6 @@
 package me.devyonghee.kotlinrealworld.article.domain
 
+import java.util.UUID
 import org.springframework.data.domain.Pageable
 
 interface ArticleRepository {
@@ -8,10 +9,10 @@ interface ArticleRepository {
 
     fun findBySlug(slug: String): Article?
 
-    fun findAll(filter: ArticleFilter, pageable: Pageable): Article
+    fun findAll(filter: ArticleFilter, pageable: Pageable): List<Article>
 
     data class ArticleFilter(
         val author: String?,
-        val tags: List<Int>?,
+        val tagId: UUID?,
     )
 }

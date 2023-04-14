@@ -9,11 +9,15 @@ class TagService(
     private val tagRepository: TagRepository
 ) {
 
-    fun save(tag: String): Tag {
-        return tagRepository.save(Tag(tag))
+    fun saveAll(tags: List<Tag>): List<Tag> {
+        return tagRepository.saveAll(tags)
     }
 
-    fun findAll(name: String): List<Tag> {
-        return tagRepository.findAll(name)
+    fun find(name: String): Tag? {
+        return tagRepository.findOrNull(name)
+    }
+
+    fun findAll(names: List<String>): List<Tag> {
+        return tagRepository.findByNames(names)
     }
 }

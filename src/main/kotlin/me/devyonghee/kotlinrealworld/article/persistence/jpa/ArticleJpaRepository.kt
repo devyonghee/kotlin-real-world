@@ -11,8 +11,8 @@ interface ArticleJpaRepository : JpaRepository<ArticleEntity, String> {
         """
         SELECT a
         FROM ArticleEntity a
-        WHERE (:#{#filter.author} IS NULL OR a.author.username = :#{#filter.author})
-        AND (:#{#filter.tags} IS NULL OR a.tagList IN :#{#filter.tags})
+        WHERE (:#{filter.author} IS NULL OR a.author = :#{filter.author})
+        AND (:#{filter.tagId} IS NULL OR :#{filter.tagId} IN a.tagList)
     """
     )
     fun findAllByFilter(filter: ArticleRepository.ArticleFilter, pageable: Pageable): List<ArticleEntity>

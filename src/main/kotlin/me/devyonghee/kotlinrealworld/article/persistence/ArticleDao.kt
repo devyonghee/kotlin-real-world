@@ -22,7 +22,7 @@ class ArticleDao(
         return articleJpaRepository.findByIdOrNull(slug)?.toArticle()
     }
 
-    override fun findAll(filter: ArticleRepository.ArticleFilter, pageable: Pageable): Article {
+    override fun findAll(filter: ArticleRepository.ArticleFilter, pageable: Pageable): List<Article> {
         return articleJpaRepository.findAllByFilter(filter, pageable)
             .map { it.toArticle() }
     }

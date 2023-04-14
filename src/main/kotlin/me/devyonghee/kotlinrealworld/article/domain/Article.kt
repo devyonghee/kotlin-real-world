@@ -2,12 +2,13 @@ package me.devyonghee.kotlinrealworld.article.domain
 
 import java.time.LocalDateTime
 import java.util.Locale
+import java.util.UUID
 
 data class Article(
     val title: String,
     val description: String,
     val body: String,
-    val tagList: List<String>,
+    val tagIds: List<UUID>,
     val author: String,
     val slug: String = title.replace(" ", "-")
         .lowercase(Locale.getDefault()),

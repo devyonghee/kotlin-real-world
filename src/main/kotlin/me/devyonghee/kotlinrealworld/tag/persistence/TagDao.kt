@@ -11,11 +11,15 @@ internal class TagDao(
     private val tagJpaRepository: TagJpaRepository
 ) : TagRepository {
 
-    override fun save(tag: Tag): Tag {
-        return tagJpaRepository.save(TagEntity(tag)).toDomain()
+    override fun saveAll(tags: List<Tag>): List<Tag> {
+        return tagJpaRepository.saveAll(tags.map { TagEntity(it) }).map { it.toDomain() }
     }
 
-    override fun findAll(name: String): List<Tag> {
-        return tagJpaRepository.findAllByNameIn(listOf(name)).map { it.toDomain() }
+    override fun findOrNull(name: String): Tag? {
+        return tagJpaRepository.findByName(name)?.toDomain()
+    }
+
+    override fun findByNames(names: List<String>): List<Tag> {
+        return tagJpaRepository.findAllByNameIn(names).map { it.toDomain() }
     }
 }

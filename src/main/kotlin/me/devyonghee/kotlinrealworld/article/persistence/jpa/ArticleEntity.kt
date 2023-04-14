@@ -7,6 +7,7 @@ import jakarta.persistence.EntityListeners
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import java.time.LocalDateTime
+import java.util.UUID
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -24,7 +25,7 @@ class ArticleEntity(
     @ElementCollection
     @JoinColumn(name = "article_slug")
     @CollectionTable(name = "article_tag")
-    val tagList: List<String> = emptyList(),
+    val tagIds: List<UUID> = emptyList(),
     @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),
     @LastModifiedDate
@@ -36,7 +37,7 @@ class ArticleEntity(
         description = article.description,
         body = article.body,
         author = article.author,
-        tagList = article.tagList,
+        tagIds = article.tagIds,
     )
 
     fun toArticle() = Article(
@@ -45,7 +46,7 @@ class ArticleEntity(
         description = description,
         body = body,
         author = author,
-        tagList = tagList,
+        tagIds = tagIds,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
