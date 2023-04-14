@@ -9,7 +9,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
 
-fun MockMvc.registerArticle(token: String, request: ArticleRequest, mapper: ObjectMapper): ArticleResponse {
+fun MockMvc.registerArticle(
+    token: String,
+    request: ArticleRequest = ArticleRequest("title", "description", "body", listOf("tag")),
+    mapper: ObjectMapper
+): ArticleResponse {
     return post("/api/articles") {
         header(HttpHeaders.AUTHORIZATION, "Token $token")
         contentType = MediaType.APPLICATION_JSON

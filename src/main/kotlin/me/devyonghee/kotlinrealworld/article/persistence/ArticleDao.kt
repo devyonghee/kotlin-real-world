@@ -4,6 +4,7 @@ import me.devyonghee.kotlinrealworld.article.domain.Article
 import me.devyonghee.kotlinrealworld.article.domain.ArticleRepository
 import me.devyonghee.kotlinrealworld.article.persistence.jpa.ArticleEntity
 import me.devyonghee.kotlinrealworld.article.persistence.jpa.ArticleJpaRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
@@ -19,5 +20,10 @@ class ArticleDao(
 
     override fun findBySlug(slug: String): Article? {
         return articleJpaRepository.findByIdOrNull(slug)?.toArticle()
+    }
+
+    override fun findAll(filter: ArticleRepository.ArticleFilter, pageable: Pageable): Article {
+        return articleJpaRepository.findAllByFilter(filter, pageable)
+            .map { it.toArticle() }
     }
 }

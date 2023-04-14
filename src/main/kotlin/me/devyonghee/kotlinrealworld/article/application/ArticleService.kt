@@ -44,6 +44,6 @@ class ArticleService(
     }
 
     fun articles(params: ArticleParams, page: Pageable) {
-        TODO("Not yet implemented")
+        articleRepository.findAll(ArticleRepository.ArticleFilter(author = params.author), page)
     }
 }

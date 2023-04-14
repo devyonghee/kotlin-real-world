@@ -1,7 +1,7 @@
 package me.devyonghee.kotlinrealworld.article.domain
 
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Locale
 
 data class Article(
     val title: String,
@@ -14,4 +14,10 @@ data class Article(
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now(),
 ) {
+
+    init {
+        require(title.isNotBlank()) { "'title' must not be blank" }
+        require(description.isNotBlank()) { "'description' must not be blank" }
+        require(author.isNotBlank()) { "'author' must not be blank" }
+    }
 }

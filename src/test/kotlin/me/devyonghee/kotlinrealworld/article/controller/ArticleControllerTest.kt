@@ -61,22 +61,27 @@ class ArticleControllerTest(
 
 
     "아티클 리스트를 조회할 수 있음" {
-        mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
-
+        // given
+        val account: AccountResponse =
+            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
+        mockmvc.registerArticle(account.token, mapper = mapper)
+        // when & then
         mockmvc.get("/api/articles") {
+            header(HttpHeaders.AUTHORIZATION, "Token ${account.token}")
             param("tag", "tag")
             param("author", "author")
-            param("favorited", "favorited")
+            param("favorited", "author")
             param("limit", "10")
             param("offset", "0")
 
         }.andExpect {
             status { isOk() }
+            jsonPath("$.articles[0].slug") { value("title") }
         }
     }
 
 
-    "팔로우한 사용자의 아티클을 조죄할 수 있음" {
+    "팔로우한 사용자의 아티클을 조회할 수 있음" {
         // given
         val author: AccountResponse =
             mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)

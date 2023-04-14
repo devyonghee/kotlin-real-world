@@ -6,11 +6,11 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import java.time.LocalDateTime
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
 
 @Entity(name = "article")
 @EntityListeners(AuditingEntityListener::class)
