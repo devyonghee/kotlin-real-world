@@ -1,5 +1,6 @@
 package me.devyonghee.kotlinrealworld.tag.application
 
+import java.util.UUID
 import me.devyonghee.kotlinrealworld.tag.domain.Tag
 import me.devyonghee.kotlinrealworld.tag.domain.TagRepository
 import org.springframework.stereotype.Service
@@ -11,6 +12,10 @@ class TagService(
 
     fun saveAll(tags: List<Tag>): List<Tag> {
         return tagRepository.saveAll(tags)
+    }
+
+    fun findAllByIds(ids: Iterable<UUID>): List<Tag> {
+        return tagRepository.findByIds(ids)
     }
 
     fun find(name: String): Tag? {

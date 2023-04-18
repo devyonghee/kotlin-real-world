@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class MemberProfileControllerTest(
     private val mockMvc: MockMvc,

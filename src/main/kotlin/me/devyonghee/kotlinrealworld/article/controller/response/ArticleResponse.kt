@@ -1,9 +1,10 @@
 package me.devyonghee.kotlinrealworld.article.controller.response
 
 import com.fasterxml.jackson.annotation.JsonRootName
+import java.time.LocalDateTime
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import me.devyonghee.kotlinrealworld.member.domain.Member
-import java.time.LocalDateTime
+import me.devyonghee.kotlinrealworld.tag.domain.Tag
 
 @JsonRootName("article")
 class ArticleResponse(
@@ -21,6 +22,7 @@ class ArticleResponse(
     constructor(
         article: Article,
         member: Member,
+        tags: List<Tag>,
         following: Boolean,
         favorited: Boolean,
         favoritesCount: Int
@@ -29,7 +31,7 @@ class ArticleResponse(
         article.title,
         article.description,
         article.body,
-        article.tagList,
+        tags.map { it.name },
         article.createdAt,
         article.updatedAt,
         favorited,

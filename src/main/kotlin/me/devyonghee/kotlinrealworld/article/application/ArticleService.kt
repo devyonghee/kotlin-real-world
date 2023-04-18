@@ -60,6 +60,7 @@ class ArticleService(
         return ArticleResponse(
             article,
             member,
+            tagService.findAllByIds(article.tagIds),
             followService.exists(Follow(article.author, member.username)),
             favorites.any { member.username == it.username },
             favorites.count()
@@ -67,8 +68,6 @@ class ArticleService(
     }
 
     fun articles(params: ArticleParams, page: Pageable) {
-
-
         articleRepository.findAll(
             ArticleRepository.ArticleFilter(
                 author = params.author,

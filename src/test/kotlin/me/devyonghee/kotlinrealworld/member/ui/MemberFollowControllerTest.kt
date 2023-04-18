@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.post
 
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class MemberFollowControllerTest(
     private val mockMvc: MockMvc,

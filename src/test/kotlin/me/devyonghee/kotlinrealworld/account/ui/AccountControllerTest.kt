@@ -18,8 +18,8 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 
 
+@SpringBootTest
 @AutoConfigureMockMvc(print = MockMvcPrint.SYSTEM_OUT)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class AccountControllerTest(
     private val mockMvc: MockMvc,
