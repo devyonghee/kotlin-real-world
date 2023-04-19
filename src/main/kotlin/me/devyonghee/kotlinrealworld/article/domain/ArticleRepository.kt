@@ -14,5 +14,6 @@ interface ArticleRepository {
     data class ArticleFilter(
         val author: String?,
         val tagId: UUID?,
+        val favorited: String?
     )
 }

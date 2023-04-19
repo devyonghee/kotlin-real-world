@@ -80,7 +80,6 @@ class ArticleControllerTest(
         }
     }
 
-
     "팔로우한 사용자의 아티클을 조회할 수 있음" {
         // given
         val author: AccountResponse =

@@ -7,8 +7,8 @@ import me.devyonghee.kotlinrealworld.member.domain.Member
 @Entity(name = "member")
 class MemberEntity(
     @Id
-    var email: String,
     var username: String,
+    var email: String,
     private var bio: String?,
     private var image: String?
 ) {

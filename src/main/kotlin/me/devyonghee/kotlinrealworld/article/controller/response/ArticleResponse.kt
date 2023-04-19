@@ -7,7 +7,7 @@ import me.devyonghee.kotlinrealworld.member.domain.Member
 import me.devyonghee.kotlinrealworld.tag.domain.Tag
 
 @JsonRootName("article")
-class ArticleResponse(
+data class ArticleResponse(
     val slug: String,
     val title: String,
     val description: String,

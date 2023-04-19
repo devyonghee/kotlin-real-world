@@ -6,6 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.Table
 import java.time.LocalDateTime
 import java.util.UUID
 import me.devyonghee.kotlinrealworld.article.domain.Article
@@ -13,7 +14,8 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 
-@Entity(name = "article")
+@Entity
+@Table(name = "article")
 @EntityListeners(AuditingEntityListener::class)
 class ArticleEntity(
     @Id
@@ -26,16 +28,21 @@ class ArticleEntity(
     @JoinColumn(name = "article_slug")
     @CollectionTable(name = "article_tag")
     val tagIds: List<UUID> = emptyList(),
+    @ElementCollection
+    @JoinColumn(name = "article_slug")
+    @CollectionTable(name = "article_favorite")
+    val favorites: List<String> = emptyList(),
     @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),
     @LastModifiedDate
-    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    var updatedAt: LocalDateTime = LocalDateTime.now(),
 ) {
     constructor(article: Article) : this(
         slug = article.slug,
         title = article.title,
         description = article.description,
         body = article.body,
+        favorites = article.favorites,
         author = article.author,
         tagIds = article.tagIds,
     )
@@ -45,6 +52,7 @@ class ArticleEntity(
         title = title,
         description = description,
         body = body,
+        favorites = favorites,
         author = author,
         tagIds = tagIds,
         createdAt = createdAt,

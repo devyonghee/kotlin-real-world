@@ -3,17 +3,17 @@ package me.devyonghee.kotlinrealworld.article.application
 import java.util.UUID
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParams
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
+import me.devyonghee.kotlinrealworld.article.controller.response.ArticleListResponse
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import me.devyonghee.kotlinrealworld.article.domain.ArticleRepository
-import me.devyonghee.kotlinrealworld.favorite.application.FavoriteService
-import me.devyonghee.kotlinrealworld.favorite.domain.Favorite
 import me.devyonghee.kotlinrealworld.follow.application.FollowService
 import me.devyonghee.kotlinrealworld.follow.domain.Follow
 import me.devyonghee.kotlinrealworld.member.application.MemberService
 import me.devyonghee.kotlinrealworld.member.domain.Member
 import me.devyonghee.kotlinrealworld.tag.application.TagService
 import me.devyonghee.kotlinrealworld.tag.domain.Tag
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class ArticleService(
     private val articleRepository: ArticleRepository,
-    private val favoriteService: FavoriteService,
     private val memberService: MemberService,
     private val followService: FollowService,
     private val tagService: TagService,
@@ -30,11 +29,21 @@ class ArticleService(
     @Transactional
     fun create(email: String, request: ArticleRequest): ArticleResponse {
         val member: Member = memberService.member(email)
-
         val article: Article = articleRepository.save(
             Article(request.title, request.description, request.body, tagIds(request.tagList), member.username)
         )
-        return articleResponse(member, article)
+        return articleResponse(article)
+    }
+
+    fun articles(params: ArticleParams, page: Pageable, username: String?): ArticleListResponse {
+        return ArticleListResponse(articleRepository.findAll(
+            ArticleRepository.ArticleFilter(
+                author = params.author,
+                tagId = params.tag?.let { tagService.find(it) }?.id,
+                favorited = params.favorited
+            ),
+            PageRequest.of(page.pageNumber, page.pageSize)
+        ).map { articleResponse(it, username) })
     }
 
     private fun tagIds(tagNames: List<String>): List<UUID> {
@@ -55,24 +64,14 @@ class ArticleService(
             .map { it.id }
     }
 
-    fun articleResponse(member: Member, article: Article): ArticleResponse {
-        val favorites: List<Favorite> = favoriteService.findAll(article.slug)
+    fun articleResponse(article: Article, from: String? = null): ArticleResponse {
         return ArticleResponse(
             article,
-            member,
+            memberService.memberByUsername(article.author),
             tagService.findAllByIds(article.tagIds),
-            followService.exists(Follow(article.author, member.username)),
-            favorites.any { member.username == it.username },
-            favorites.count()
-        )
-    }
-
-    fun articles(params: ArticleParams, page: Pageable) {
-        articleRepository.findAll(
-            ArticleRepository.ArticleFilter(
-                author = params.author,
-                tagId = params.tag?.let { tagService.find(it) }?.id
-            ), page
+            from?.let { followService.exists(Follow(article.author, it)) } ?: false,
+            from?.let { user -> article.favorites.any { it == user } } ?: false,
+            article.favorites.count()
         )
     }
 }

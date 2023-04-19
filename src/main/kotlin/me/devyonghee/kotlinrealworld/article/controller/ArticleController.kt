@@ -1,8 +1,10 @@
 package me.devyonghee.kotlinrealworld.article.controller
 
+import java.net.URI
 import me.devyonghee.kotlinrealworld.article.application.ArticleService
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParams
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
+import me.devyonghee.kotlinrealworld.article.controller.response.ArticleListResponse
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 
 @RestController
 class ArticleController(
@@ -31,7 +32,11 @@ class ArticleController(
     }
 
     @GetMapping("/api/articles")
-    fun articles(@RequestParam params: ArticleParams, @PageableDefault page: Pageable) {
-        return articleService.articles(params, page)
+    fun articles(
+        @AuthenticationPrincipal user: UserDetails?,
+        @RequestParam params: ArticleParams,
+        @PageableDefault page: Pageable
+    ): ResponseEntity<ArticleListResponse> {
+        return ResponseEntity.ok().body(articleService.articles(params, page, user?.username))
     }
 }

@@ -10,6 +10,7 @@ data class Article(
     val body: String,
     val tagIds: List<UUID>,
     val author: String,
+    val favorites: List<String> = emptyList(),
     val slug: String = title.replace(" ", "-")
         .lowercase(Locale.getDefault()),
     val createdAt: LocalDateTime = LocalDateTime.now(),
