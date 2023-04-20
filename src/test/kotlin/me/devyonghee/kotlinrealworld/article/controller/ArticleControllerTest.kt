@@ -70,11 +70,10 @@ class ArticleControllerTest(
             header(HttpHeaders.AUTHORIZATION, "Token ${account.token}")
             param("tag", "tag")
             param("author", "author")
-            param("favorited", "author")
-            param("limit", "10")
+            param("limit", "5")
             param("offset", "0")
 
-        }.andExpect {
+        }.andDo { print() }.andExpect {
             status { isOk() }
             jsonPath("$.articles[0].slug") { value("title") }
         }

@@ -28,8 +28,8 @@ class JsonWebTokenSecurity(
             throw BadCredentialsException("Invalid token")
         }
 
-        jsonWebTokenService.email(authentication.substring(BEARER_PREFIX.length))
-            .let { email -> accountService.account(email) }
+        jsonWebTokenService.username(authentication.substring(BEARER_PREFIX.length))
+            .let { username -> accountService.account(username) }
             .let { AccountUserDetails(it) }
             .also {
                 SecurityContextHolder.getContext().authentication =

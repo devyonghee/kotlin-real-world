@@ -1,5 +1,6 @@
 package me.devyonghee.kotlinrealworld.article.controller.response
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonRootName
 import java.time.LocalDateTime
 import me.devyonghee.kotlinrealworld.article.domain.Article
@@ -7,7 +8,7 @@ import me.devyonghee.kotlinrealworld.member.domain.Member
 import me.devyonghee.kotlinrealworld.tag.domain.Tag
 
 @JsonRootName("article")
-data class ArticleResponse(
+data class ArticleResponse @JsonCreator constructor(
     val slug: String,
     val title: String,
     val description: String,

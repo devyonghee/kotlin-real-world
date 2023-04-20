@@ -16,12 +16,12 @@ class AccountService(
         return accountRepository.save(account)
     }
 
-    fun account(email: String): Account {
-        return accountRepository.findByEmail(email)
-            ?: throw NotFoundElementException("account(email: `$email`) is not found")
+    fun account(username: String): Account {
+        return accountRepository.findByUsername(username)
+            ?: throw NotFoundElementException("account(username: `$username`) is not found")
     }
 
-    fun update(email: String, account: Account): Account {
-        return accountRepository.update(email, account)
+    fun update(username: String, account: Account): Account {
+        return accountRepository.update(username, account)
     }
 }

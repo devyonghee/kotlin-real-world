@@ -14,11 +14,11 @@ class MemberProfileService(
     private val followService: FollowService
 ) {
     fun profile(targetUsername: String): ProfileResponse {
-        return ProfileResponse(memberService.memberByUsername(targetUsername))
+        return ProfileResponse(memberService.member(targetUsername))
     }
 
     fun profile(username: String, targetUsername: String): ProfileResponse {
-        val member: Member = memberService.memberByUsername(targetUsername)
+        val member: Member = memberService.member(targetUsername)
         return ProfileResponse(member, followService.exists(Follow(username, targetUsername)))
     }
 }

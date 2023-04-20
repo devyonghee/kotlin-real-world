@@ -7,23 +7,23 @@ import me.devyonghee.kotlinrealworld.account.domain.Account
 @Entity(name = "account")
 internal class AccountEntity(
     @Id
-    var email: String,
+    var username: String,
     private var password: String,
 ) {
     constructor(account: Account) : this(
-        email = account.email,
+        username = account.username,
         password = account.password
     )
 
     fun toDomain(): Account {
         return Account(
-            email = email,
+            username = username,
             password = password,
         )
     }
 
     fun update(account: Account) {
-        email = account.email
+        username = account.username
         password = account.password
     }
 }

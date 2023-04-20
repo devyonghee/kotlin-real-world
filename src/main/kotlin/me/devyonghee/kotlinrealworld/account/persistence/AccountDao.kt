@@ -16,14 +16,14 @@ internal class AccountDao(
         return jpaRepository.save(AccountEntity(account)).toDomain()
     }
 
-    override fun findByEmail(email: String): Account? {
-        return jpaRepository.findByIdOrNull(email)?.toDomain()
+    override fun findByUsername(username: String): Account? {
+        return jpaRepository.findByIdOrNull(username)?.toDomain()
     }
 
-    override fun update(email: String, account: Account): Account {
-        return jpaRepository.findByIdOrNull(email)
+    override fun update(username: String, account: Account): Account {
+        return jpaRepository.findByIdOrNull(username)
             ?.also { it.update(account) }
             ?.toDomain()
-            ?: throw NoSuchElementException("account(email: `$email`) is not exist")
+            ?: throw NoSuchElementException("account(username: `$username`) is not exist")
     }
 }

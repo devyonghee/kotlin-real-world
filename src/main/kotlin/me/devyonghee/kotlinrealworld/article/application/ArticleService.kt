@@ -1,7 +1,7 @@
 package me.devyonghee.kotlinrealworld.article.application
 
 import java.util.UUID
-import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParams
+import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParameter
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleListResponse
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
@@ -27,15 +27,15 @@ class ArticleService(
     private val tagService: TagService,
 ) {
     @Transactional
-    fun create(email: String, request: ArticleRequest): ArticleResponse {
-        val member: Member = memberService.member(email)
+    fun create(username: String, request: ArticleRequest): ArticleResponse {
+        val member: Member = memberService.member(username)
         val article: Article = articleRepository.save(
             Article(request.title, request.description, request.body, tagIds(request.tagList), member.username)
         )
         return articleResponse(article)
     }
 
-    fun articles(params: ArticleParams, page: Pageable, username: String?): ArticleListResponse {
+    fun articles(params: ArticleParameter, page: Pageable, username: String?): ArticleListResponse {
         return ArticleListResponse(articleRepository.findAll(
             ArticleRepository.ArticleFilter(
                 author = params.author,
@@ -67,7 +67,7 @@ class ArticleService(
     fun articleResponse(article: Article, from: String? = null): ArticleResponse {
         return ArticleResponse(
             article,
-            memberService.memberByUsername(article.author),
+            memberService.member(article.author),
             tagService.findAllByIds(article.tagIds),
             from?.let { followService.exists(Follow(article.author, it)) } ?: false,
             from?.let { user -> article.favorites.any { it == user } } ?: false,

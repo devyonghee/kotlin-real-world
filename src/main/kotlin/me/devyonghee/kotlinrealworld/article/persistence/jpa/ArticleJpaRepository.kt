@@ -4,7 +4,6 @@ import me.devyonghee.kotlinrealworld.article.domain.ArticleRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
 
 interface ArticleJpaRepository : JpaRepository<ArticleEntity, String> {
 
@@ -12,13 +11,16 @@ interface ArticleJpaRepository : JpaRepository<ArticleEntity, String> {
         """
         SELECT article
         FROM ArticleEntity article
+        LEFT JOIN article.tagIds tag
+        LEFT JOIN article.favorites favorited
         WHERE 1=1
-        AND (:#{#filter?.author} IS NULL OR :#{#filter?.author} = article.author)
-        AND (:#{#filter?.tagId} IS NULL OR :#{#filter?.tagId} IN (article.tagIds))
-        AND (:#{#filter?.favorited} IS NULL OR :#{#filter?.favorited} IN (article.favorites))
+        AND (:#{#filter.author} IS NULL OR :#{#filter.author} = article.author)
+        AND (:#{#filter.tagId} IS NULL OR :#{#filter.tagId} = tag)
+        AND (:#{#filter.favorited} IS NULL OR :#{#filter.favorited} = favorited)
     """
     )
     fun findAllByFilter(
-        @Param("filter") filter: ArticleRepository.ArticleFilter,
+        filter: ArticleRepository.ArticleFilter,
+        pageable: Pageable
     ): List<ArticleEntity>
 }

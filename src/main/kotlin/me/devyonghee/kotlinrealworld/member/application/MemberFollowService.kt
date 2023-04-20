@@ -15,14 +15,14 @@ class MemberFollowService(
 ) {
     @Transactional
     fun follow(username: String, targetUser: String): ProfileResponse {
-        val member: Member = memberService.memberByUsername(targetUser)
+        val member: Member = memberService.member(targetUser)
         followService.save(Follow(targetUser, username))
         return ProfileResponse(member, true)
     }
 
     @Transactional
     fun unfollow(username: String, targetUser: String): ProfileResponse {
-        val member: Member = memberService.memberByUsername(targetUser)
+        val member: Member = memberService.member(targetUser)
         if (isNotFollowing(targetUser, username)) {
             throw InvalidRequestException("member(username: `$username`) is not following member(username: `$targetUser`)")
         }

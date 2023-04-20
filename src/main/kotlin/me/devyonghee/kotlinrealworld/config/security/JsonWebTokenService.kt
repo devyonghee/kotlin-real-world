@@ -17,17 +17,17 @@ class JsonWebTokenService(
 ) {
     private val key: Key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))
 
-    fun token(email: String): String {
+    fun token(username: String): String {
         return Jwts.builder()
             .setId(UUID.randomUUID().toString())
-            .setSubject(email)
+            .setSubject(username)
             .setIssuedAt(Date())
             .setExpiration(Date.from(tomorrow()))
             .signWith(key)
             .compact()
     }
 
-    fun email(token: String): String {
+    fun username(token: String): String {
         try {
             return Jwts.parserBuilder()
                 .setSigningKey(key)

@@ -11,12 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 class MemberService(
     private val memberRepository: MemberRepository
 ) {
-    fun member(email: String): Member {
-        return memberRepository.findByEmail(email)
-            ?: throw NotFoundElementException("member(email: `$email`) is not exist")
-    }
-
-    fun memberByUsername(username: String): Member {
+    fun member(username: String): Member {
         return memberRepository.findByUsername(username)
             ?: throw NotFoundElementException("member(username: `$username`) is not exist")
     }
