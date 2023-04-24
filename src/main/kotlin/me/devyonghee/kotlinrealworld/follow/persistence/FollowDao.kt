@@ -25,4 +25,8 @@ internal class FollowDao(
             .existsByFolloweeUsernameAndFollowerUsername(follow.followeeUsername, follow.followerUsername)
     }
 
+    override fun findAllByFollowee(followee: String): Collection<Follow> {
+        return followJpaRepository.findAllByFolloweeUsername(followee)
+            .map { it.toDomain() }
+    }
 }

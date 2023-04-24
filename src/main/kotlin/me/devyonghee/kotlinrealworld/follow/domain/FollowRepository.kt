@@ -7,4 +7,6 @@ interface FollowRepository {
     fun delete(follow: Follow)
 
     fun exists(follow: Follow): Boolean
+
+    fun findAllByFollowee(followee: String): Collection<Follow>
 }

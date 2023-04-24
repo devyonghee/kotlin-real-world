@@ -7,4 +7,6 @@ internal interface FollowJpaRepository : JpaRepository<FollowEntity, Long> {
     fun existsByFolloweeUsernameAndFollowerUsername(followeeUsername: String, followerUsername: String): Boolean
 
     fun deleteByFolloweeUsernameAndFollowerUsername(followeeUsername: String, followerUsername: String)
+
+    fun findAllByFolloweeUsername(followeeUsername: String): Collection<FollowEntity>
 }

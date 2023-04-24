@@ -20,4 +20,8 @@ class FollowService(
     fun delete(follow: Follow) {
         return followRepository.delete(follow)
     }
+
+    fun findAllByFollowee(followee: String): Collection<Follow> {
+        return followRepository.findAllByFollowee(followee)
+    }
 }

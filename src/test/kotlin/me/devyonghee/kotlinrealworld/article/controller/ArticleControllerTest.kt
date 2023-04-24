@@ -73,7 +73,7 @@ class ArticleControllerTest(
             param("limit", "5")
             param("offset", "0")
 
-        }.andDo { print() }.andExpect {
+        }.andExpect {
             status { isOk() }
             jsonPath("$.articles[0].slug") { value("title") }
         }
@@ -97,7 +97,7 @@ class ArticleControllerTest(
         mockmvc.get("/api/articles/feed") {
             header(HttpHeaders.AUTHORIZATION, "Token ${anyAccount.token}")
             param("limit", "10")
-            param("offset", "1")
+            param("offset", "0")
         }.andExpect {
             status { isOk() }
             jsonPath("$.articles[0].slug") { value(article.slug) }

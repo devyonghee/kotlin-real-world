@@ -42,6 +42,15 @@ class ArticleController(
             .body(mapper.writeValueAsString(articleService.articles(parameters, page, user?.username)))
     }
 
+    @GetMapping("/api/articles/feed")
+    fun feedArticles(
+        @AuthenticationPrincipal user: UserDetails,
+        @PageableDefault page: PageRequest
+    ): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .body(mapper.writeValueAsString(articleService.feedArticles(user.username, page)))
+    }
+
     companion object {
         private val mapper: ObjectMapper = ObjectMapper()
             .registerModules(JavaTimeModule())

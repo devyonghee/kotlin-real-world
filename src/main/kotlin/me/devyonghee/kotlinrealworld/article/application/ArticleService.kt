@@ -36,14 +36,29 @@ class ArticleService(
     }
 
     fun articles(params: ArticleParameter, page: Pageable, username: String?): ArticleListResponse {
+        val tagId: UUID? = params.tag?.let { tagService.find(it) }?.id
+        if (params.tag != null && tagId == null) {
+            return ArticleListResponse(emptyList())
+        }
         return ArticleListResponse(articleRepository.findAll(
             ArticleRepository.ArticleFilter(
                 author = params.author,
-                tagId = params.tag?.let { tagService.find(it) }?.id,
+                tagId = tagId,
                 favorited = params.favorited
             ),
             PageRequest.of(page.pageNumber, page.pageSize)
         ).map { articleResponse(it, username) })
+    }
+
+    fun feedArticles(username: String, page: Pageable): ArticleListResponse {
+        val followers: List<String> = followService.findAllByFollowee(username)
+            .map { it.followerUsername }
+        return ArticleListResponse(
+            articleRepository.findAllByAuthorIn(
+                followers,
+                PageRequest.of(page.pageNumber, page.pageSize)
+            ).map { articleResponse(it, username) }
+        )
     }
 
     private fun tagIds(tagNames: List<String>): List<UUID> {
@@ -64,7 +79,7 @@ class ArticleService(
             .map { it.id }
     }
 
-    fun articleResponse(article: Article, from: String? = null): ArticleResponse {
+    private fun articleResponse(article: Article, from: String? = null): ArticleResponse {
         return ArticleResponse(
             article,
             memberService.member(article.author),

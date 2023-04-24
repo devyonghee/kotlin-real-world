@@ -1,11 +1,14 @@
 package me.devyonghee.kotlinrealworld.article.persistence.jpa
 
-import me.devyonghee.kotlinrealworld.article.domain.ArticleRepository
+import java.util.UUID
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface ArticleJpaRepository : JpaRepository<ArticleEntity, String> {
+
+    fun findAllByAuthorIn(authors: Collection<String>, pageable: Pageable): List<ArticleEntity>
 
     @Query(
         """
@@ -14,13 +17,15 @@ interface ArticleJpaRepository : JpaRepository<ArticleEntity, String> {
         LEFT JOIN article.tagIds tag
         LEFT JOIN article.favorites favorited
         WHERE 1=1
-        AND (:#{#filter.author} IS NULL OR :#{#filter.author} = article.author)
-        AND (:#{#filter.tagId} IS NULL OR :#{#filter.tagId} = tag)
-        AND (:#{#filter.favorited} IS NULL OR :#{#filter.favorited} = favorited)
+        AND (:author IS NULL OR article.author in (:author))
+        AND (:tagId IS NULL OR :tagId = tag)
+        AND (:favorited IS NULL OR :favorited = favorited)
     """
     )
-    fun findAllByFilter(
-        filter: ArticleRepository.ArticleFilter,
+    fun findAll(
+        @Param("author") author: String?,
+        @Param("tagId") tagId: UUID?,
+        @Param("favorited") favorited: String?,
         pageable: Pageable
     ): List<ArticleEntity>
 }

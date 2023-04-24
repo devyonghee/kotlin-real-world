@@ -11,9 +11,11 @@ interface ArticleRepository {
 
     fun findAll(filter: ArticleFilter, pageable: Pageable): List<Article>
 
+    fun findAllByAuthorIn(authors: Collection<String>, pageable: Pageable): List<Article>
+
     data class ArticleFilter(
-        val author: String?,
-        val tagId: UUID?,
-        val favorited: String?
+        val author: String? = null,
+        val tagId: UUID? = null,
+        val favorited: String? = null
     )
 }
