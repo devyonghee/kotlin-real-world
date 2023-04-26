@@ -117,10 +117,10 @@ class ArticleControllerTest(
                 ArticleRequest("title", "description", "body", listOf("tags1")),
                 mapper
             )
-        val newTitle = "newTItle"
+        val newTitle = "newTitle"
 
         // when & then
-        mockmvc.put("/api/articles/{slug}", article.slug) {
+        mockmvc.put("/api/articles/${article.slug}") {
             header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
             contentType = MediaType.APPLICATION_JSON
             content = """
@@ -130,7 +130,7 @@ class ArticleControllerTest(
                     }
                 }
             """.trimIndent()
-        }.andExpect {
+        }.andDo { print() }.andExpect {
             status { isOk() }
             jsonPath("$.article.title") { value(newTitle) }
         }

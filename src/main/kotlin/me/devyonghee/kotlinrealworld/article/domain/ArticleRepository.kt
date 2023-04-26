@@ -13,6 +13,8 @@ interface ArticleRepository {
 
     fun findAllByAuthorIn(authors: Collection<String>, pageable: Pageable): List<Article>
 
+    fun update(article: Article)
+
     data class ArticleFilter(
         val author: String? = null,
         val tagId: UUID? = null,

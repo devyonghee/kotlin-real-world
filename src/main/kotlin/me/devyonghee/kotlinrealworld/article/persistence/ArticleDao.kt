@@ -31,4 +31,15 @@ class ArticleDao(
         return articleJpaRepository.findAllByAuthorIn(authors, pageable)
             .map { it.toArticle() }
     }
+
+    override fun update(article: Article) {
+        entity(article.slug)
+            .apply { change(article) }
+            .apply { articleJpaRepository.flush() }
+    }
+
+    private fun entity(slug: String): ArticleEntity {
+        return articleJpaRepository.findByIdOrNull(slug)
+            ?: throw IllegalArgumentException("article is not exist. article(slug: `${slug}`)")
+    }
 }

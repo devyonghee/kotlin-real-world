@@ -19,10 +19,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @EntityListeners(AuditingEntityListener::class)
 class ArticleEntity(
     @Id
-    val slug: String,
-    val title: String,
-    val description: String,
-    val body: String,
+    var slug: String,
+    var title: String,
+    var description: String,
+    var body: String,
     val author: String,
     @ElementCollection
     @JoinColumn(name = "article_slug")
@@ -58,4 +58,12 @@ class ArticleEntity(
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
+
+    fun change(article: Article) {
+        this.slug = article.title
+        this.title = article.title
+        this.description = article.description
+        this.body = article.body
+        this.updatedAt = LocalDateTime.now()
+    }
 }

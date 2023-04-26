@@ -3,10 +3,12 @@ package me.devyonghee.kotlinrealworld.article.application
 import java.util.UUID
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParameter
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
+import me.devyonghee.kotlinrealworld.article.controller.request.ArticleUpdateRequest
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleListResponse
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import me.devyonghee.kotlinrealworld.article.domain.ArticleRepository
+import me.devyonghee.kotlinrealworld.config.exception.NotFoundElementException
 import me.devyonghee.kotlinrealworld.follow.application.FollowService
 import me.devyonghee.kotlinrealworld.follow.domain.Follow
 import me.devyonghee.kotlinrealworld.member.application.MemberService
@@ -20,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
-class ArticleService(
+data class ArticleService(
     private val articleRepository: ArticleRepository,
     private val memberService: MemberService,
     private val followService: FollowService,
@@ -88,5 +90,22 @@ class ArticleService(
             from?.let { user -> article.favorites.any { it == user } } ?: false,
             article.favorites.count()
         )
+    }
+
+    @Transactional
+    fun changeArticle(username: String, slug: String, updateRequest: ArticleUpdateRequest): ArticleResponse {
+        val article: Article = articleRepository.findBySlug(slug)
+            ?: throw NotFoundElementException("article is not exist. article(slug: `${slug}`)")
+
+        return article.run {
+            updateRequest.body?.let { changedBody(it) } ?: this
+        }.run {
+            updateRequest.title?.let { changedTitle(it) } ?: this
+        }.run {
+            updateRequest.description?.let { changedDescription(it) } ?: this
+        }.let {
+            articleRepository.update(it)
+            articleResponse(it)
+        }
     }
 }
