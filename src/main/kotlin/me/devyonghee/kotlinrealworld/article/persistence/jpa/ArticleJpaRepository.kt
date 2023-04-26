@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface ArticleJpaRepository : JpaRepository<ArticleEntity, String> {
+interface ArticleJpaRepository : JpaRepository<ArticleEntity, Long> {
+
+    fun findBySlug(slug: String): ArticleEntity?
 
     fun findAllByAuthorIn(authors: Collection<String>, pageable: Pageable): List<ArticleEntity>
 

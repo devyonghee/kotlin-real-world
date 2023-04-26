@@ -18,6 +18,7 @@ data class Article(
     val author: String,
     val favorites: List<String> = emptyList(),
     val slug: String = slug(title),
+    val id: Long = 0,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now(),
 ) {

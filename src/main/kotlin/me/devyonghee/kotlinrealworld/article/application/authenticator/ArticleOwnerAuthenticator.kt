@@ -6,7 +6,7 @@ import me.devyonghee.kotlinrealworld.config.exception.NotFoundElementException
 import org.springframework.stereotype.Component
 
 @Component
-data class ArticleOwnerAuthenticator(
+class ArticleOwnerAuthenticator(
     private val articleRepository: ArticleRepository
 ) {
     fun isOwner(slug: String, username: String): Boolean {

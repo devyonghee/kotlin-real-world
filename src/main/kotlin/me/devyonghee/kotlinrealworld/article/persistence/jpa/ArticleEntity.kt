@@ -4,6 +4,8 @@ import jakarta.persistence.CollectionTable
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.Table
@@ -19,6 +21,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @EntityListeners(AuditingEntityListener::class)
 class ArticleEntity(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
     var slug: String,
     var title: String,
     var description: String,
@@ -48,6 +52,7 @@ class ArticleEntity(
     )
 
     fun toArticle() = Article(
+        id = id,
         slug = slug,
         title = title,
         description = description,

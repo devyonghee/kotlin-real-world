@@ -55,7 +55,6 @@ class ArticleController(
             .body(mapper.writeValueAsString(articleService.feedArticles(user.username, page)))
     }
 
-    @PreAuthorize("articleOwnerAuthenticator.isOwner(#slug, #user.username)")
     @PutMapping("/api/articles/{slug}")
     fun updateArticle(
         @AuthenticationPrincipal user: UserDetails,

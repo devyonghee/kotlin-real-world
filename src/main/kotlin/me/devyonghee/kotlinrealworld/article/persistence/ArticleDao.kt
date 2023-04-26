@@ -19,7 +19,7 @@ class ArticleDao(
     }
 
     override fun findBySlug(slug: String): Article? {
-        return articleJpaRepository.findByIdOrNull(slug)?.toArticle()
+        return articleJpaRepository.findBySlug(slug)?.toArticle()
     }
 
     override fun findAll(filter: ArticleRepository.ArticleFilter, pageable: Pageable): List<Article> {
@@ -33,13 +33,13 @@ class ArticleDao(
     }
 
     override fun update(article: Article) {
-        entity(article.slug)
+        entity(article.id)
             .apply { change(article) }
             .apply { articleJpaRepository.flush() }
     }
 
-    private fun entity(slug: String): ArticleEntity {
-        return articleJpaRepository.findByIdOrNull(slug)
-            ?: throw IllegalArgumentException("article is not exist. article(slug: `${slug}`)")
+    private fun entity(id: Long): ArticleEntity {
+        return articleJpaRepository.findByIdOrNull(id)
+            ?: throw IllegalArgumentException("article is not exist. article(id: `${id}`)")
     }
 }

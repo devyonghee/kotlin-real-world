@@ -17,6 +17,7 @@ import me.devyonghee.kotlinrealworld.tag.application.TagService
 import me.devyonghee.kotlinrealworld.tag.domain.Tag
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -93,6 +94,7 @@ data class ArticleService(
     }
 
     @Transactional
+    @PreAuthorize("@articleOwnerAuthenticator.isOwner(#slug, #username)")
     fun changeArticle(username: String, slug: String, updateRequest: ArticleUpdateRequest): ArticleResponse {
         val article: Article = articleRepository.findBySlug(slug)
             ?: throw NotFoundElementException("article is not exist. article(slug: `${slug}`)")

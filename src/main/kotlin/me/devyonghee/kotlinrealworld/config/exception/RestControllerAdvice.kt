@@ -11,8 +11,6 @@ import javax.naming.AuthenticationException
 @RestControllerAdvice
 class RestControllerAdvice : ResponseEntityExceptionHandler() {
 
-    private val logger = org.slf4j.LoggerFactory.getLogger(RestControllerAdvice::class.java)
-
     @ExceptionHandler(RealWorldException::class)
     fun handleAuthenticationException(exception: RealWorldException): ResponseEntity<ProblemDetail> {
         logger.error(exception.message, exception)
@@ -41,7 +39,7 @@ class RestControllerAdvice : ResponseEntityExceptionHandler() {
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(exception: AuthenticationException): ResponseEntity<ProblemDetail> {
+    fun handleException(exception: Exception): ResponseEntity<ProblemDetail> {
         logger.error(exception.message, exception)
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(

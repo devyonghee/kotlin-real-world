@@ -126,7 +126,7 @@ class ArticleControllerTest(
             content = """
                 {
                     "article": {
-                        "title": "$newTitle",
+                        "title": "$newTitle"
                     }
                 }
             """.trimIndent()
