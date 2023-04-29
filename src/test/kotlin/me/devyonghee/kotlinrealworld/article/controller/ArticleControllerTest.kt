@@ -2,10 +2,10 @@ package me.devyonghee.kotlinrealworld.article.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.sequences.contain
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
-import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import me.devyonghee.kotlinrealworld.article.registerArticle
 import me.devyonghee.kotlinrealworld.member.follow
@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -23,19 +22,21 @@ import org.springframework.test.web.servlet.put
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class ArticleControllerTest(
     private val mockmvc: MockMvc,
     private val mapper: ObjectMapper
 ) : StringSpec({
 
+    lateinit var author: AccountResponse
+
+    beforeSpec {
+        author = mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
+    }
+
     "아티클을 작성할 수 있음" {
-        // given
-        val account: AccountResponse =
-            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
         // when
         mockmvc.post("/api/articles") {
-            header(HttpHeaders.AUTHORIZATION, "Token ${account.token}")
+            header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
             contentType = MediaType.APPLICATION_JSON
             content = """
                 {
@@ -55,19 +56,17 @@ class ArticleControllerTest(
             jsonPath("$.article.updatedAt") { notNullValue() }
             jsonPath("$.article.favorited") { value(false) }
             jsonPath("$.article.favoritesCount") { value(0) }
-            jsonPath("$.article.author.username") { value("author") }
+            jsonPath("$.article.author.username") { value(author.username) }
         }
     }
 
 
     "아티클 리스트를 조회할 수 있음" {
         // given
-        val account: AccountResponse =
-            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
-        mockmvc.registerArticle(account.token, mapper = mapper)
+        val article: ArticleResponse = mockmvc.registerArticle(author.token, mapper = mapper)
         // when & then
         mockmvc.get("/api/articles") {
-            header(HttpHeaders.AUTHORIZATION, "Token ${account.token}")
+            header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
             param("tag", "tag")
             param("author", "author")
             param("limit", "5")
@@ -75,20 +74,14 @@ class ArticleControllerTest(
 
         }.andExpect {
             status { isOk() }
-            jsonPath("$.articles[0].slug") { value("title") }
+            jsonPath("$.articles[0].slug") { article.slug }
+            jsonPath("$.articles[0].author") { article.author }
         }
     }
 
     "팔로우한 사용자의 아티클을 조회할 수 있음" {
         // given
-        val author: AccountResponse =
-            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
-        val article: ArticleResponse =
-            mockmvc.registerArticle(
-                author.token,
-                ArticleRequest("title", "description", "body", listOf("tags1")),
-                mapper
-            )
+        val article: ArticleResponse = mockmvc.registerArticle(author.token, mapper = mapper)
         val anyAccount: AccountResponse =
             mockmvc.registerAccount(AccountRequest("any@any.com", "password", "any"), mapper)
         mockmvc.follow(anyAccount.token, author.username)
@@ -100,23 +93,17 @@ class ArticleControllerTest(
             param("offset", "0")
         }.andExpect {
             status { isOk() }
-            jsonPath("$.articles[0].slug") { value(article.slug) }
-            jsonPath("$.articles[0].title") { value(article.title) }
-            jsonPath("$.articles[0].description") { value(article.description) }
-            jsonPath("$.articles[0].body") { value(article.body) }
+            jsonPath("$.articles[*].slug") { contain(article.slug) }
+            jsonPath("$.articles[*].title") { contain(article.title) }
+            jsonPath("$.articles[*].description") { contain(article.description) }
+            jsonPath("$.articles[*].body") { contain(article.body) }
         }
     }
 
     "아티클을 수정할 수 있음" {
         // given
-        val author: AccountResponse =
-            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
         val article: ArticleResponse =
-            mockmvc.registerArticle(
-                author.token,
-                ArticleRequest("title", "description", "body", listOf("tags1")),
-                mapper
-            )
+            mockmvc.registerArticle(author.token, mapper = mapper)
         val newTitle = "newTitle"
 
         // when & then
@@ -130,7 +117,7 @@ class ArticleControllerTest(
                     }
                 }
             """.trimIndent()
-        }.andDo { print() }.andExpect {
+        }.andExpect {
             status { isOk() }
             jsonPath("$.article.title") { value(newTitle) }
         }
@@ -138,21 +125,14 @@ class ArticleControllerTest(
 
     "아티클을 삭제할 수 있음" {
         // given
-        val author: AccountResponse =
-            mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
-        val article: ArticleResponse =
-            mockmvc.registerArticle(
-                author.token,
-                ArticleRequest("title", "description", "body", listOf("tags1")),
-                mapper
-            )
+        val article: ArticleResponse = mockmvc.registerArticle(author.token, mapper = mapper)
 
         // when
         mockmvc.delete("/api/articles/{slug}", article.slug) {
             header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isOk() }
+            status { isNoContent() }
         }
 
         // then

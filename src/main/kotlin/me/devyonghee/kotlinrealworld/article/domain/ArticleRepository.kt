@@ -15,6 +15,8 @@ interface ArticleRepository {
 
     fun update(article: Article)
 
+    fun deleteBySlug(slug: String)
+
     data class ArticleFilter(
         val author: String? = null,
         val tagId: UUID? = null,

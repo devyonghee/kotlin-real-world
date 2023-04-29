@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
@@ -46,6 +47,13 @@ class ArticleController(
             .body(mapper.writeValueAsString(articleService.articles(parameters, page, user?.username)))
     }
 
+    @GetMapping("/api/articles/{slug}")
+    fun article(@PathVariable slug: String,
+                @AuthenticationPrincipal user: UserDetails?): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .body(mapper.writeValueAsString(articleService.article(slug, user?.username)))
+    }
+
     @GetMapping("/api/articles/feed")
     fun feedArticles(
         @AuthenticationPrincipal user: UserDetails,
@@ -63,6 +71,16 @@ class ArticleController(
     ): ResponseEntity<ArticleResponse> {
         return ResponseEntity.ok()
             .body(articleService.changeArticle(user.username, slug, request))
+    }
+
+    @DeleteMapping("/api/articles/{slug}")
+    @PreAuthorize("@articleOwnerAuthenticator.isOwner(#slug, #user.username)")
+    fun deleteArticle(
+        @AuthenticationPrincipal user: UserDetails,
+        @PathVariable slug: String,
+    ): ResponseEntity<ArticleResponse> {
+        articleService.deleteArticle(slug)
+        return ResponseEntity.noContent().build()
     }
 
     companion object {

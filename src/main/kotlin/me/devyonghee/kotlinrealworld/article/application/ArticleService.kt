@@ -38,6 +38,11 @@ data class ArticleService(
         return articleResponse(article)
     }
 
+    fun article(slug: String, username: String?): ArticleResponse {
+        return articleRepository.findBySlug(slug)?.let { articleResponse(it, username) }
+            ?: throw NotFoundElementException("article is not exist. article(slug: `$slug`)")
+    }
+
     fun articles(params: ArticleParameter, page: Pageable, username: String?): ArticleListResponse {
         val tagId: UUID? = params.tag?.let { tagService.find(it) }?.id
         if (params.tag != null && tagId == null) {
@@ -109,5 +114,10 @@ data class ArticleService(
             articleRepository.update(it)
             articleResponse(it)
         }
+    }
+
+    @Transactional
+    fun deleteArticle(slug: String) {
+        articleRepository.deleteBySlug(slug)
     }
 }

@@ -1,6 +1,7 @@
 package me.devyonghee.kotlinrealworld.article.persistence.jpa
 
 import jakarta.persistence.CollectionTable
+import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
@@ -23,17 +24,18 @@ class ArticleEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+    @Column(unique = true)
     var slug: String,
     var title: String,
     var description: String,
     var body: String,
     val author: String,
     @ElementCollection
-    @JoinColumn(name = "article_slug")
+    @JoinColumn(name = "article_id")
     @CollectionTable(name = "article_tag")
     val tagIds: List<UUID> = emptyList(),
     @ElementCollection
-    @JoinColumn(name = "article_slug")
+    @JoinColumn(name = "article_id")
     @CollectionTable(name = "article_favorite")
     val favorites: List<String> = emptyList(),
     @CreatedDate
@@ -42,6 +44,7 @@ class ArticleEntity(
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 ) {
     constructor(article: Article) : this(
+        id = article.id,
         slug = article.slug,
         title = article.title,
         description = article.description,
@@ -65,7 +68,7 @@ class ArticleEntity(
     )
 
     fun change(article: Article) {
-        this.slug = article.title
+        this.slug = article.slug
         this.title = article.title
         this.description = article.description
         this.body = article.body

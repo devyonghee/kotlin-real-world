@@ -1,12 +1,12 @@
 package me.devyonghee.kotlinrealworld.config.exception
 
+import javax.naming.AuthenticationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import javax.naming.AuthenticationException
 
 @RestControllerAdvice
 class RestControllerAdvice : ResponseEntityExceptionHandler() {
@@ -14,7 +14,7 @@ class RestControllerAdvice : ResponseEntityExceptionHandler() {
     @ExceptionHandler(RealWorldException::class)
     fun handleAuthenticationException(exception: RealWorldException): ResponseEntity<ProblemDetail> {
         logger.error(exception.message, exception)
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(exception.httpStatus)
             .body(
                 ProblemDetail.forStatusAndDetail(
                     exception.httpStatus,

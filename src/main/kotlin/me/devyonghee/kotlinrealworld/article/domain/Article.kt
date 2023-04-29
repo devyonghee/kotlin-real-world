@@ -1,13 +1,12 @@
 package me.devyonghee.kotlinrealworld.article.domain
 
 import java.time.LocalDateTime
-import java.util.Locale
 import java.util.UUID
 
 
 private fun slug(string: String): String {
     return string.replace(" ", "-")
-        .lowercase(Locale.getDefault())
+        .lowercase()
 }
 
 data class Article(

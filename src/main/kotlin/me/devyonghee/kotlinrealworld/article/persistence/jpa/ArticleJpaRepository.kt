@@ -12,14 +12,15 @@ interface ArticleJpaRepository : JpaRepository<ArticleEntity, Long> {
 
     fun findAllByAuthorIn(authors: Collection<String>, pageable: Pageable): List<ArticleEntity>
 
+    fun deleteBySlug(slug: String)
+
     @Query(
         """
         SELECT article
         FROM ArticleEntity article
         LEFT JOIN article.tagIds tag
         LEFT JOIN article.favorites favorited
-        WHERE 1=1
-        AND (:author IS NULL OR article.author in (:author))
+        WHERE (:author IS NULL OR article.author in (:author))
         AND (:tagId IS NULL OR :tagId = tag)
         AND (:favorited IS NULL OR :favorited = favorited)
     """
@@ -30,4 +31,5 @@ interface ArticleJpaRepository : JpaRepository<ArticleEntity, Long> {
         @Param("favorited") favorited: String?,
         pageable: Pageable
     ): List<ArticleEntity>
+
 }

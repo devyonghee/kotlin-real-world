@@ -1,6 +1,7 @@
 package me.devyonghee.kotlinrealworld.article
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.util.UUID
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import org.springframework.http.HttpHeaders
@@ -11,7 +12,7 @@ import org.springframework.test.web.servlet.post
 
 fun MockMvc.registerArticle(
     token: String,
-    request: ArticleRequest = ArticleRequest("title", "description", "body", listOf("tag")),
+    request: ArticleRequest = ArticleRequest(UUID.randomUUID().toString(), "description", "body", listOf("tag")),
     mapper: ObjectMapper
 ): ArticleResponse {
     return post("/api/articles") {

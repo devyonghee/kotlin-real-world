@@ -38,6 +38,10 @@ class ArticleDao(
             .apply { articleJpaRepository.flush() }
     }
 
+    override fun deleteBySlug(slug: String) {
+        articleJpaRepository.deleteBySlug(slug)
+    }
+
     private fun entity(id: Long): ArticleEntity {
         return articleJpaRepository.findByIdOrNull(id)
             ?: throw IllegalArgumentException("article is not exist. article(id: `${id}`)")
