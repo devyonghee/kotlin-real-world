@@ -26,4 +26,8 @@ internal class TagDao(
     override fun findByNames(names: List<String>): List<Tag> {
         return tagJpaRepository.findAllByNameIn(names).map { it.toDomain() }
     }
+
+    override fun findAll(): List<Tag> {
+        return tagJpaRepository.findAll().map { it.toDomain() }
+    }
 }

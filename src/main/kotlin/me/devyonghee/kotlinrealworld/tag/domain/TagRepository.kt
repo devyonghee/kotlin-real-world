@@ -10,4 +10,6 @@ interface TagRepository {
     fun findOrNull(name: String): Tag?
 
     fun findByNames(names: List<String>): List<Tag>
+
+    fun findAll(): List<Tag>
 }

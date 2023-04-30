@@ -7,8 +7,12 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
+var number: Int = 0
 
-fun MockMvc.registerAccount(request: AccountRequest, mapper: ObjectMapper): AccountResponse {
+fun MockMvc.registerAccount(
+    request: AccountRequest = AccountRequest("email${++number}@email.com", "passwod", "user$number"),
+    mapper: ObjectMapper
+): AccountResponse {
     return post("/api/users") {
         contentType = MediaType.APPLICATION_JSON
         content = mapper.writeValueAsString(request)

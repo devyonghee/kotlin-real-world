@@ -1,5 +1,6 @@
 package me.devyonghee.kotlinrealworld.article.application
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.UUID
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParameter
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
@@ -103,7 +104,7 @@ data class ArticleService(
     fun changeArticle(username: String, slug: String, updateRequest: ArticleUpdateRequest): ArticleResponse {
         val article: Article = articleRepository.findBySlug(slug)
             ?: throw NotFoundElementException("article is not exist. article(slug: `${slug}`)")
-
+ObjectMapper()
         return article.run {
             updateRequest.body?.let { changedBody(it) } ?: this
         }.run {

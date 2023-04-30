@@ -18,7 +18,7 @@ data class ArticleResponse @JsonCreator constructor(
     val updatedAt: LocalDateTime,
     val favorited: Boolean,
     val favoritesCount: Int,
-    val author: Author,
+    val author: AuthorResponse,
 ) {
     constructor(
         article: Article,
@@ -37,13 +37,6 @@ data class ArticleResponse @JsonCreator constructor(
         article.updatedAt,
         favorited,
         favoritesCount,
-        Author(member.username, member.bio, member.image, following)
-    )
-
-    data class Author(
-        val username: String,
-        val bio: String?,
-        val image: String?,
-        val following: Boolean,
+        AuthorResponse(member.username, member.bio, member.image, following)
     )
 }
