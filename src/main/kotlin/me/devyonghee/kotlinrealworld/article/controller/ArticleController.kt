@@ -1,12 +1,11 @@
 package me.devyonghee.kotlinrealworld.article.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import java.net.URI
 import me.devyonghee.kotlinrealworld.article.application.ArticleService
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParameter
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleUpdateRequest
+import me.devyonghee.kotlinrealworld.article.controller.response.ArticleListResponse
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import me.devyonghee.kotlinrealworld.model.PageRequest
 import org.springframework.data.web.PageableDefault
@@ -42,25 +41,27 @@ class ArticleController(
         @AuthenticationPrincipal user: UserDetails?,
         @ModelAttribute parameters: ArticleParameter,
         @PageableDefault page: PageRequest
-    ): ResponseEntity<String> {
+    ): ResponseEntity<ArticleListResponse> {
         return ResponseEntity.ok()
-            .body(mapper.writeValueAsString(articleService.articles(parameters, page, user?.username)))
+            .body(articleService.articles(parameters, page, user?.username))
     }
 
     @GetMapping("/api/articles/{slug}")
-    fun article(@PathVariable slug: String,
-                @AuthenticationPrincipal user: UserDetails?): ResponseEntity<String> {
+    fun article(
+        @PathVariable slug: String,
+        @AuthenticationPrincipal user: UserDetails?
+    ): ResponseEntity<ArticleResponse> {
         return ResponseEntity.ok()
-            .body(mapper.writeValueAsString(articleService.article(slug, user?.username)))
+            .body(articleService.article(slug, user?.username))
     }
 
     @GetMapping("/api/articles/feed")
     fun feedArticles(
         @AuthenticationPrincipal user: UserDetails,
         @PageableDefault page: PageRequest
-    ): ResponseEntity<String> {
+    ): ResponseEntity<ArticleListResponse> {
         return ResponseEntity.ok()
-            .body(mapper.writeValueAsString(articleService.feedArticles(user.username, page)))
+            .body(articleService.feedArticles(user.username, page))
     }
 
     @PutMapping("/api/articles/{slug}")
@@ -81,10 +82,5 @@ class ArticleController(
     ): ResponseEntity<ArticleResponse> {
         articleService.deleteArticle(slug)
         return ResponseEntity.noContent().build()
-    }
-
-    companion object {
-        private val mapper: ObjectMapper = ObjectMapper()
-            .registerModules(JavaTimeModule())
     }
 }

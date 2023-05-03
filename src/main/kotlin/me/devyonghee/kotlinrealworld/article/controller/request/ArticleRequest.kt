@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonRootName
 import jakarta.validation.constraints.NotBlank
 
 @JsonRootName("article")
+
 class ArticleRequest(
     @NotBlank
     val title: String,

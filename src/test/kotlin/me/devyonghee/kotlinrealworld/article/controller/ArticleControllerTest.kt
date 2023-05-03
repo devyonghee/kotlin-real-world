@@ -2,7 +2,6 @@ package me.devyonghee.kotlinrealworld.article.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.sequences.contain
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
@@ -20,8 +19,8 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 
-@AutoConfigureMockMvc
 @SpringBootTest
+@AutoConfigureMockMvc
 class ArticleControllerTest(
     private val mockmvc: MockMvc,
     private val mapper: ObjectMapper
@@ -67,21 +66,23 @@ class ArticleControllerTest(
         // when & then
         mockmvc.get("/api/articles") {
             header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
-            param("tag", "tag")
-            param("author", "author")
+            param("tag", article.tagList[0])
+            param("author", article.author.username)
             param("limit", "5")
             param("offset", "0")
 
-        }.andExpect {
+        }.andDo { print() }.andExpect {
             status { isOk() }
-            jsonPath("$.articles[0].slug") { article.slug }
-            jsonPath("$.articles[0].author") { article.author }
+            jsonPath("$.articles[0].slug") { value(article.slug) }
+            jsonPath("$.articles[0].title") { value(article.title) }
+            jsonPath("$.articles[0].description") { value(article.description) }
+            jsonPath("$.articles[0].author.username") { value(article.author.username) }
         }
     }
 
     "팔로우한 사용자의 아티클을 조회할 수 있음" {
         // given
-        val article: ArticleResponse = mockmvc.registerArticle(author.token, mapper = mapper)
+        mockmvc.registerArticle(author.token, mapper = mapper)
         val anyAccount: AccountResponse =
             mockmvc.registerAccount(AccountRequest("any@any.com", "password", "any"), mapper)
         mockmvc.follow(anyAccount.token, author.username)
@@ -93,10 +94,7 @@ class ArticleControllerTest(
             param("offset", "0")
         }.andExpect {
             status { isOk() }
-            jsonPath("$.articles[*].slug") { contain(article.slug) }
-            jsonPath("$.articles[*].title") { contain(article.title) }
-            jsonPath("$.articles[*].description") { contain(article.description) }
-            jsonPath("$.articles[*].body") { contain(article.body) }
+            jsonPath("$.articles") { isArray() }
         }
     }
 

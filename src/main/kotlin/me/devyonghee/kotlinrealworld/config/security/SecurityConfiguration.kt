@@ -33,6 +33,7 @@ class SecurityConfiguration(
             .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
             .requestMatchers("/api/users/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/profiles/*").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/tags").permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilterAt(jsonWebTokenFilter, BasicAuthenticationFilter::class.java)

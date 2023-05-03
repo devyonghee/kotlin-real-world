@@ -40,9 +40,11 @@ class TagControllerTest(
             mapper = mapper
         )
         // when & then
-        mockmvc.get("/api/tags").andExpect {
-            status { isOk() }
-            jsonPath("$.tags") { containAllInAnyOrder(article.tagList) }
-        }
+        mockmvc.get("/api/tags")
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                jsonPath("$.tags") { containAllInAnyOrder(article.tagList) }
+            }
     }
 })
