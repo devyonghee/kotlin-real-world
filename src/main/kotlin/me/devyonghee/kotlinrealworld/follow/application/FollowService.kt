@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service
 class FollowService(
     private val followRepository: FollowRepository
 ) {
-
     fun save(follow: Follow) {
         followRepository.save(follow)
     }

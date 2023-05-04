@@ -1,7 +1,7 @@
 package me.devyonghee.kotlinrealworld.article.controller
 
 import java.net.URI
-import me.devyonghee.kotlinrealworld.article.application.ArticleService
+import me.devyonghee.kotlinrealworld.article.application.MemberArticleService
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleParameter
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleUpdateRequest
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class ArticleController(
-    private val articleService: ArticleService,
+    private val memberArticleService: MemberArticleService,
 ) {
 
     @PostMapping("/api/articles")
@@ -32,7 +32,7 @@ class ArticleController(
         @RequestBody request: ArticleRequest,
         @AuthenticationPrincipal user: UserDetails
     ): ResponseEntity<ArticleResponse> {
-        val response: ArticleResponse = articleService.create(user.username, request)
+        val response: ArticleResponse = memberArticleService.create(user.username, request)
         return ResponseEntity.created(URI("/api/articles/${response.slug}")).body(response)
     }
 
@@ -43,7 +43,7 @@ class ArticleController(
         @PageableDefault page: PageRequest
     ): ResponseEntity<ArticleListResponse> {
         return ResponseEntity.ok()
-            .body(articleService.articles(parameters, page, user?.username))
+            .body(memberArticleService.articles(parameters, page, user?.username))
     }
 
     @GetMapping("/api/articles/{slug}")
@@ -52,7 +52,7 @@ class ArticleController(
         @AuthenticationPrincipal user: UserDetails?
     ): ResponseEntity<ArticleResponse> {
         return ResponseEntity.ok()
-            .body(articleService.article(slug, user?.username))
+            .body(memberArticleService.article(slug, user?.username))
     }
 
     @GetMapping("/api/articles/feed")
@@ -61,7 +61,7 @@ class ArticleController(
         @PageableDefault page: PageRequest
     ): ResponseEntity<ArticleListResponse> {
         return ResponseEntity.ok()
-            .body(articleService.feedArticles(user.username, page))
+            .body(memberArticleService.feedArticles(user.username, page))
     }
 
     @PutMapping("/api/articles/{slug}")
@@ -71,7 +71,7 @@ class ArticleController(
         @RequestBody request: ArticleUpdateRequest
     ): ResponseEntity<ArticleResponse> {
         return ResponseEntity.ok()
-            .body(articleService.changeArticle(user.username, slug, request))
+            .body(memberArticleService.changeArticle(user.username, slug, request))
     }
 
     @DeleteMapping("/api/articles/{slug}")
@@ -79,8 +79,8 @@ class ArticleController(
     fun deleteArticle(
         @AuthenticationPrincipal user: UserDetails,
         @PathVariable slug: String,
-    ): ResponseEntity<ArticleResponse> {
-        articleService.deleteArticle(slug)
+    ): ResponseEntity<Unit> {
+        memberArticleService.deleteArticle(slug)
         return ResponseEntity.noContent().build()
     }
 }

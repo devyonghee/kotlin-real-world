@@ -9,6 +9,7 @@ import me.devyonghee.kotlinrealworld.article.controller.response.ArticleListResp
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import me.devyonghee.kotlinrealworld.article.domain.Article
 import me.devyonghee.kotlinrealworld.article.domain.ArticleRepository
+import me.devyonghee.kotlinrealworld.article.domain.service.ArticleService
 import me.devyonghee.kotlinrealworld.config.exception.NotFoundElementException
 import me.devyonghee.kotlinrealworld.follow.application.FollowService
 import me.devyonghee.kotlinrealworld.follow.domain.Follow
@@ -24,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
-data class ArticleService(
-    private val articleRepository: ArticleRepository,
+data class MemberArticleService(
+    private val articleService: ArticleService,
     private val memberService: MemberService,
     private val followService: FollowService,
     private val tagService: TagService,
@@ -33,15 +34,14 @@ data class ArticleService(
     @Transactional
     fun create(username: String, request: ArticleRequest): ArticleResponse {
         val member: Member = memberService.member(username)
-        val article: Article = articleRepository.save(
+        val article: Article = articleService.save(
             Article(request.title, request.description, request.body, tagIds(request.tagList), member.username)
         )
         return articleResponse(article)
     }
 
     fun article(slug: String, username: String?): ArticleResponse {
-        return articleRepository.findBySlug(slug)?.let { articleResponse(it, username) }
-            ?: throw NotFoundElementException("article is not exist. article(slug: `$slug`)")
+        return articleResponse(articleService.article(slug), username)
     }
 
     fun articles(params: ArticleParameter, page: Pageable, username: String?): ArticleListResponse {
@@ -49,7 +49,7 @@ data class ArticleService(
         if (params.tag != null && tagId == null) {
             return ArticleListResponse(emptyList())
         }
-        return ArticleListResponse(articleRepository.findAll(
+        return ArticleListResponse(articleService.articles(
             ArticleRepository.ArticleFilter(
                 author = params.author,
                 tagId = tagId,
@@ -63,7 +63,7 @@ data class ArticleService(
         val followers: List<String> = followService.findAllByFollowee(username)
             .map { it.followerUsername }
         return ArticleListResponse(
-            articleRepository.findAllByAuthorIn(
+            articleService.articles(
                 followers,
                 PageRequest.of(page.pageNumber, page.pageSize)
             ).map { articleResponse(it, username) }
@@ -102,9 +102,9 @@ data class ArticleService(
     @Transactional
     @PreAuthorize("@articleOwnerAuthenticator.isOwner(#slug, #username)")
     fun changeArticle(username: String, slug: String, updateRequest: ArticleUpdateRequest): ArticleResponse {
-        val article: Article = articleRepository.findBySlug(slug)
+        val article: Article = articleService.article(slug)
             ?: throw NotFoundElementException("article is not exist. article(slug: `${slug}`)")
-ObjectMapper()
+        ObjectMapper()
         return article.run {
             updateRequest.body?.let { changedBody(it) } ?: this
         }.run {
@@ -112,13 +112,13 @@ ObjectMapper()
         }.run {
             updateRequest.description?.let { changedDescription(it) } ?: this
         }.let {
-            articleRepository.update(it)
+            articleService.update(it)
             articleResponse(it)
         }
     }
 
     @Transactional
     fun deleteArticle(slug: String) {
-        articleRepository.deleteBySlug(slug)
+        articleService.deleteBySlug(slug)
     }
 }

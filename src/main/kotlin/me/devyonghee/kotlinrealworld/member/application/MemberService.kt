@@ -23,4 +23,8 @@ class MemberService(
     fun save(member: Member): Member {
         return memberRepository.save(member)
     }
+
+    fun exists(username: String): Boolean {
+        return memberRepository.exists(username)
+    }
 }
