@@ -3,6 +3,7 @@ package me.devyonghee.kotlinrealworld.comment.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.sequences.contain
+import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
 import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
@@ -16,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -25,11 +27,14 @@ import org.springframework.test.web.servlet.post
 @AutoConfigureMockMvc
 class CommentControllerTest(
     private val mockmvc: MockMvc,
+    private val jdbcTemplate: JdbcTemplate,
     private val mapper: ObjectMapper
 ) : StringSpec({
 
     lateinit var author: AccountResponse
     lateinit var article: ArticleResponse
+
+    listener(DatabaseAfterEachCleanup(jdbcTemplate))
 
     beforeSpec {
         author = mockmvc.registerAccount(mapper = mapper)

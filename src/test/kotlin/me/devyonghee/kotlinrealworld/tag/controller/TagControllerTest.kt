@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.sequences.containAllInAnyOrder
 import java.util.UUID
+import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
 import me.devyonghee.kotlinrealworld.article.controller.request.ArticleRequest
@@ -11,6 +12,7 @@ import me.devyonghee.kotlinrealworld.article.controller.response.ArticleResponse
 import me.devyonghee.kotlinrealworld.article.registerArticle
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
@@ -18,8 +20,11 @@ import org.springframework.test.web.servlet.get
 @AutoConfigureMockMvc
 class TagControllerTest(
     private val mockmvc: MockMvc,
+    private val jdbcTemplate: JdbcTemplate,
     private val mapper: ObjectMapper
 ) : StringSpec({
+
+    listener(DatabaseAfterEachCleanup(jdbcTemplate))
 
     lateinit var author: AccountResponse
 

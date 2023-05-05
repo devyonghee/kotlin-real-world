@@ -2,16 +2,15 @@ package me.devyonghee.kotlinrealworld.account.ui
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
+import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.test.annotation.DirtiesContext
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -19,12 +18,14 @@ import org.springframework.test.web.servlet.put
 
 
 @SpringBootTest
-@AutoConfigureMockMvc(print = MockMvcPrint.SYSTEM_OUT)
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+@AutoConfigureMockMvc
 class AccountControllerTest(
     private val mockMvc: MockMvc,
+    private val jdbcTemplate: JdbcTemplate,
     private val mapper: ObjectMapper
 ) : StringSpec({
+
+    listener(DatabaseAfterEachCleanup(jdbcTemplate))
 
     "로그인을 하면 토큰과 함께 사용자 정보를 반환" {
         //given

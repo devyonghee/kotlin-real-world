@@ -2,9 +2,11 @@ package me.devyonghee.kotlinrealworld.member.persistence.jpa
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 import me.devyonghee.kotlinrealworld.member.domain.Member
 
-@Entity(name = "member")
+@Entity
+@Table(name = "member")
 class MemberEntity(
     @Id
     var username: String,

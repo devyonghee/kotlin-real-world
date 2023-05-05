@@ -4,9 +4,11 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 import me.devyonghee.kotlinrealworld.follow.domain.Follow
 
-@Entity(name = "follow")
+@Entity
+@Table(name = "follow")
 class FollowEntity(
     private val followerUsername: String,
     private val followeeUsername: String,

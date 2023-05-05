@@ -2,6 +2,7 @@ package me.devyonghee.kotlinrealworld.article.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
+import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -23,12 +25,15 @@ import org.springframework.test.web.servlet.put
 @AutoConfigureMockMvc
 class ArticleControllerTest(
     private val mockmvc: MockMvc,
+    private val jdbcTemplate: JdbcTemplate,
     private val mapper: ObjectMapper
 ) : StringSpec({
 
+    listener(DatabaseAfterEachCleanup(jdbcTemplate))
+
     lateinit var author: AccountResponse
 
-    beforeSpec {
+    beforeEach {
         author = mockmvc.registerAccount(AccountRequest("author@author.com", "password", "author"), mapper)
     }
 
@@ -71,7 +76,7 @@ class ArticleControllerTest(
             param("limit", "5")
             param("offset", "0")
 
-        }.andDo { print() }.andExpect {
+        }.andExpect {
             status { isOk() }
             jsonPath("$.articles[0].slug") { value(article.slug) }
             jsonPath("$.articles[0].title") { value(article.title) }

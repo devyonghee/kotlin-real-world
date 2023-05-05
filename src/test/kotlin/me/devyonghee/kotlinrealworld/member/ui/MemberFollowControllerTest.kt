@@ -2,26 +2,27 @@ package me.devyonghee.kotlinrealworld.member.ui
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
+import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.test.annotation.DirtiesContext
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.post
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class MemberFollowControllerTest(
     private val mockMvc: MockMvc,
+    private val jdbcTemplate: JdbcTemplate,
     private val mapper: ObjectMapper,
 ) : StringSpec({
+
+    listener(DatabaseAfterEachCleanup(jdbcTemplate))
 
     "다른 사용자를 팔로우 할 수 있음" {
         //given

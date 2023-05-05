@@ -3,10 +3,12 @@ package me.devyonghee.kotlinrealworld.tag.persistence.jpa
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.util.UUID
 import me.devyonghee.kotlinrealworld.tag.domain.Tag
 
 @Entity
+@Table(name = "tag")
 class TagEntity(
     @Id
     var id: UUID,
