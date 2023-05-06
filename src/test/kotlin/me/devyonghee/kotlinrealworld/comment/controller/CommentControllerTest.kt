@@ -2,7 +2,6 @@ package me.devyonghee.kotlinrealworld.comment.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.sequences.contain
 import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
@@ -24,7 +23,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(printOnlyOnFailure = false)
 class CommentControllerTest(
     private val mockmvc: MockMvc,
     private val jdbcTemplate: JdbcTemplate,
@@ -36,7 +35,7 @@ class CommentControllerTest(
 
     listener(DatabaseAfterEachCleanup(jdbcTemplate))
 
-    beforeSpec {
+    beforeEach {
         author = mockmvc.registerAccount(mapper = mapper)
         article = mockmvc.registerArticle(author.token, mapper = mapper)
     }
@@ -48,14 +47,10 @@ class CommentControllerTest(
             header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
             contentType = MediaType.APPLICATION_JSON
             content = """
-                {
-                    "comment": {
-                        "body": "$body",
-                    }
-                }
+                {"comment": {"body": "$body"}}
             """.trimIndent()
         }.andExpect {
-            status { isCreated() }
+            status { isOk() }
             jsonPath("$.comment.id") { notNullValue() }
             jsonPath("$.comment.body") { value(body) }
         }
@@ -65,12 +60,11 @@ class CommentControllerTest(
         // given
         val comment: CommentResponse = mockmvc.registerComment(author.token, article.slug, mapper = mapper)
         // when & then
-        mockmvc.get("/api/articles/${article.slug}/comments") {
-            header(HttpHeaders.AUTHORIZATION, "Token ${author.token}")
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.comments[*].body") { contain(comment.body) }
-        }
+        mockmvc.get("/api/articles/${article.slug}/comments")
+            .andExpect {
+                status { isOk() }
+                jsonPath("$.comments[0].body") { value(comment.body) }
+            }
     }
 
     "아티클의 댓글을 삭제할 수 있음" {

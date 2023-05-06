@@ -59,5 +59,5 @@ class CommentService(
         )
     }
 
-    private fun isNotExist(username: String) = memberService.exists(username)
+    private fun isNotExist(username: String) = !memberService.exists(username)
 }

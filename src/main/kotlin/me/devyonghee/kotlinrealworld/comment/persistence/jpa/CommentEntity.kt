@@ -1,6 +1,8 @@
 package me.devyonghee.kotlinrealworld.comment.persistence.jpa
 
 import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.LocalDateTime
@@ -10,6 +12,7 @@ import me.devyonghee.kotlinrealworld.comment.domain.Comment
 @Table(name = "comment")
 class CommentEntity(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
     val body: String,
     val author: String,
