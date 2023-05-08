@@ -1,4 +1,4 @@
-package me.devyonghee.kotlinrealworld.account.application
+package me.devyonghee.kotlinrealworld.account.domain.service
 
 import me.devyonghee.kotlinrealworld.account.domain.Account
 import me.devyonghee.kotlinrealworld.account.domain.AccountRepository
@@ -16,9 +16,9 @@ class AccountService(
         return accountRepository.save(account)
     }
 
-    fun account(username: String): Account {
-        return accountRepository.findByUsername(username)
-            ?: throw NotFoundElementException("account(username: `$username`) is not found")
+    fun account(email: String): Account {
+        return accountRepository.findByEmail(email)
+            ?: throw NotFoundElementException("account(email: `$email`) is not found")
     }
 
     fun update(username: String, account: Account): Account {

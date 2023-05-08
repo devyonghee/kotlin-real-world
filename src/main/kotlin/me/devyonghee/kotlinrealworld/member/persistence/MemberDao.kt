@@ -21,11 +21,11 @@ internal class MemberDao(
     }
 
     override fun findByEmail(email: String): Member? {
-        return memberJpaRepository.findByIdOrNull(email)?.toDomain()
+        return memberJpaRepository.findByEmail(email)?.toDomain()
     }
 
-    override fun findByUsername(email: String): Member? {
-        return memberJpaRepository.findByUsername(email)?.toDomain()
+    override fun findByUsername(username: String): Member? {
+        return memberJpaRepository.findByIdOrNull(username)?.toDomain()
     }
 
     override fun update(email: String, member: Member): Member {

@@ -27,7 +27,7 @@ class JsonWebTokenService(
             .compact()
     }
 
-    fun username(token: String): String {
+    fun email(token: String): String {
         try {
             return Jwts.parserBuilder()
                 .setSigningKey(key)

@@ -3,7 +3,8 @@ package me.devyonghee.kotlinrealworld.config.security
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import me.devyonghee.kotlinrealworld.account.application.AccountService
+import me.devyonghee.kotlinrealworld.account.domain.service.AccountService
+import me.devyonghee.kotlinrealworld.member.application.MemberService
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -14,7 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JsonWebTokenSecurity(
     private val jsonWebTokenService: JsonWebTokenService,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val memberService: MemberService
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -28,9 +30,9 @@ class JsonWebTokenSecurity(
             throw BadCredentialsException("Invalid token")
         }
 
-        jsonWebTokenService.username(authentication.substring(BEARER_PREFIX.length))
-            .let { username -> accountService.account(username) }
-            .let { AccountUserDetails(it) }
+        jsonWebTokenService.email(authentication.substring(BEARER_PREFIX.length))
+            .let { email -> accountService.account(email) }
+            .let { AccountUserDetails(it, memberService.memberByEmail(it.email).username) }
             .also {
                 SecurityContextHolder.getContext().authentication =
                     UsernamePasswordAuthenticationToken.authenticated(it, null, it.authorities)

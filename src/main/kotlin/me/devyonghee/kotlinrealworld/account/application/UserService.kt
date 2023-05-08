@@ -1,6 +1,7 @@
 package me.devyonghee.kotlinrealworld.account.application
 
 import me.devyonghee.kotlinrealworld.account.domain.Account
+import me.devyonghee.kotlinrealworld.account.domain.service.AccountService
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountUpdateRequest
 import me.devyonghee.kotlinrealworld.account.ui.request.LoginRequest
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
-class AccountUserCase(
+class UserService(
     private val accountService: AccountService,
     private val memberService: MemberService,
     private val jsonWebTokenService: JsonWebTokenService,
@@ -28,27 +29,27 @@ class AccountUserCase(
             if (!passwordEncoder.matches(request.password, account.password)) {
                 throw IllegalArgumentException("password is not matched")
             }
-            val member: Member = memberService.member(account.username)
+            val member: Member = memberService.memberByEmail(account.email)
             return AccountResponse(
                 member.email,
-                jsonWebTokenService.token(account.username),
+                jsonWebTokenService.token(member.email),
                 member.username,
                 member.bio,
                 member.image
             )
         } catch (e: NotFoundElementException) {
-            throw BadCredentialsException("bad credentials")
+            throw BadCredentialsException("bad credentials", e)
         }
     }
 
     @Transactional
     fun register(request: AccountRequest): AccountResponse {
-        val account: Account = accountService.save(Account(request.username, passwordEncoder.encode(request.password)))
         val member: Member = memberService.save(Member(request.username, request.email))
+        accountService.save(Account(request.email, passwordEncoder.encode(request.password)))
 
         return AccountResponse(
             member.email,
-            jsonWebTokenService.token(account.username),
+            jsonWebTokenService.token(member.email),
             member.username,
             member.bio,
             member.image
@@ -56,12 +57,10 @@ class AccountUserCase(
     }
 
     fun account(username: String): AccountResponse {
-        val account: Account = accountService.account(username)
         val member: Member = memberService.member(username)
-
         return AccountResponse(
             member.email,
-            jsonWebTokenService.token(account.username),
+            jsonWebTokenService.token(member.email),
             member.username,
             member.bio,
             member.image
@@ -70,40 +69,32 @@ class AccountUserCase(
 
     @Transactional
     fun update(username: String, request: AccountUpdateRequest): AccountResponse {
-        val updatedAccount: Account = accountService.update(
-            username, request.toAccount(
-                accountService.account(username),
-                passwordEncoder
+        val member = memberService.member(username)
+        val updatedMember: Member = memberService.update(
+            username,
+            Member(
+                request.username ?: member.username,
+                request.email ?: member.email,
+                request.image ?: member.image,
+                request.bio ?: member.bio
             )
         )
 
-        val updatedMember: Member = memberService.update(
-            username,
-            request.toMember(memberService.member(username))
+        val account = accountService.account(updatedMember.email)
+        val updatedAccount: Account = accountService.update(
+            account.email, Account(
+                request.email ?: account.email,
+                request.password?.let { passwordEncoder.encode(it) } ?: account.password,
+            )
         )
 
         return AccountResponse(
             updatedMember.email,
-            jsonWebTokenService.token(updatedAccount.username),
+            jsonWebTokenService.token(updatedAccount.email),
             updatedMember.username,
             updatedMember.bio,
             updatedMember.image
         )
     }
 
-    private fun AccountUpdateRequest.toAccount(account: Account, passwordEncoder: PasswordEncoder): Account {
-        return Account(
-            email ?: account.username,
-            password?.let { passwordEncoder.encode(it) } ?: account.password,
-        )
-    }
-
-    private fun AccountUpdateRequest.toMember(member: Member): Member {
-        return Member(
-            username ?: member.username,
-            email ?: member.email,
-            image ?: member.image,
-            bio ?: member.bio
-        )
-    }
 }

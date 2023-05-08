@@ -4,7 +4,7 @@ interface AccountRepository {
 
     fun save(account: Account): Account
 
-    fun findByUsername(username: String): Account?
+    fun findByEmail(email: String): Account?
 
     fun update(username: String, account: Account): Account
 }

@@ -16,8 +16,8 @@ internal class AccountDao(
         return jpaRepository.save(AccountEntity(account)).toDomain()
     }
 
-    override fun findByUsername(username: String): Account? {
-        return jpaRepository.findByIdOrNull(username)?.toDomain()
+    override fun findByEmail(email: String): Account? {
+        return jpaRepository.findByIdOrNull(email)?.toDomain()
     }
 
     override fun update(username: String, account: Account): Account {

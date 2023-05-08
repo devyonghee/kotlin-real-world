@@ -9,23 +9,23 @@ import me.devyonghee.kotlinrealworld.account.domain.Account
 @Table(name = "account")
 internal class AccountEntity(
     @Id
-    var username: String,
+    private var email: String,
     private var password: String,
 ) {
     constructor(account: Account) : this(
-        username = account.username,
+        email = account.email,
         password = account.password
     )
 
     fun toDomain(): Account {
         return Account(
-            username = username,
+            email = email,
             password = password,
         )
     }
 
     fun update(account: Account) {
-        username = account.username
+        email = account.email
         password = account.password
     }
 }

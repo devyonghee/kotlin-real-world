@@ -2,6 +2,7 @@ package me.devyonghee.kotlinrealworld.account.ui
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.property.beNamed
 import me.devyonghee.kotlinrealworld.DatabaseAfterEachCleanup
 import me.devyonghee.kotlinrealworld.account.registerAccount
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
@@ -24,6 +25,7 @@ class AccountControllerTest(
     private val jdbcTemplate: JdbcTemplate,
     private val mapper: ObjectMapper
 ) : StringSpec({
+    beNamed("회원 관련 기능")
 
     listener(DatabaseAfterEachCleanup(jdbcTemplate))
 
