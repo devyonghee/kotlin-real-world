@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(printOnlyOnFailure = false)
 class ArticleControllerTest(
     private val mockmvc: MockMvc,
     private val jdbcTemplate: JdbcTemplate,

@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.put
 
 @SpringBootTest
 @AutoConfigureMockMvc
+
 class AccountControllerTest(
     private val mockMvc: MockMvc,
     private val jdbcTemplate: JdbcTemplate,
@@ -33,8 +34,7 @@ class AccountControllerTest(
         //given
         val email = "jake@jake.jake"
         val password = "jakejake"
-        val username = "jake"
-        mockMvc.registerAccount(AccountRequest(email, password, username), mapper)
+        mockMvc.registerAccount(AccountRequest(email, password, "jake"), mapper)
         //when & then
         mockMvc.post("/api/users/login") {
             contentType = MediaType.APPLICATION_JSON
@@ -50,7 +50,7 @@ class AccountControllerTest(
             status { isOk() }
             jsonPath("$.user.email") { value(email) }
             jsonPath("$.user.token") { isString() }
-            jsonPath("$.user.username") { value(username) }
+            jsonPath("$.user.username") { value("jake") }
         }
     }
 

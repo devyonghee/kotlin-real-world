@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.post
 var number: Int = 0
 
 fun MockMvc.registerAccount(
-    request: AccountRequest = AccountRequest("email${++number}@email.com", "passwod", "user$number"),
+    request: AccountRequest = AccountRequest("email${++number}@email.com", "password", "user$number"),
     mapper: ObjectMapper
 ): AccountResponse {
     return post("/api/users") {
