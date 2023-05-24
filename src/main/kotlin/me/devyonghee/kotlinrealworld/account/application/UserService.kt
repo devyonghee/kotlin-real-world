@@ -6,11 +6,11 @@ import me.devyonghee.kotlinrealworld.account.ui.request.AccountRequest
 import me.devyonghee.kotlinrealworld.account.ui.request.AccountUpdateRequest
 import me.devyonghee.kotlinrealworld.account.ui.request.LoginRequest
 import me.devyonghee.kotlinrealworld.account.ui.response.AccountResponse
-import me.devyonghee.kotlinrealworld.config.exception.NotFoundElementException
 import me.devyonghee.kotlinrealworld.config.security.JsonWebTokenService
 import me.devyonghee.kotlinrealworld.member.application.MemberService
 import me.devyonghee.kotlinrealworld.member.domain.Member
-import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,25 +21,22 @@ class UserService(
     private val accountService: AccountService,
     private val memberService: MemberService,
     private val jsonWebTokenService: JsonWebTokenService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val authenticationManager: AuthenticationManager
 ) {
     fun login(request: LoginRequest): AccountResponse {
-        try {
-            val account = accountService.account(request.email)
-            if (!passwordEncoder.matches(request.password, account.password)) {
-                throw IllegalArgumentException("password is not matched")
+        return authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken.unauthenticated(request.email, request.password)
+        ).let { authentication -> memberService.memberByEmail(authentication.name) }
+            .let {
+                AccountResponse(
+                    it.email,
+                    jsonWebTokenService.token(it.email),
+                    it.username,
+                    it.bio,
+                    it.image
+                )
             }
-            val member: Member = memberService.memberByEmail(account.email)
-            return AccountResponse(
-                member.email,
-                jsonWebTokenService.token(member.email),
-                member.username,
-                member.bio,
-                member.image
-            )
-        } catch (e: NotFoundElementException) {
-            throw BadCredentialsException("bad credentials", e)
-        }
     }
 
     @Transactional
