@@ -25,9 +25,15 @@ class UserService(
     private val authenticationManager: AuthenticationManager
 ) {
     fun login(request: LoginRequest): AccountResponse {
-        return authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken.unauthenticated(request.email, request.password)
-        ).let { authentication -> memberService.memberByEmail(authentication.name) }
+        return memberService.memberByEmail(request.email)
+            .also {
+                authenticationManager.authenticate(
+                    UsernamePasswordAuthenticationToken.unauthenticated(
+                        it.username,
+                        request.password
+                    )
+                )
+            }
             .let {
                 AccountResponse(
                     it.email,
@@ -93,5 +99,4 @@ class UserService(
             updatedMember.image
         )
     }
-
 }
